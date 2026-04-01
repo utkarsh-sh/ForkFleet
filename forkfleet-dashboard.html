@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ForkFleet — Restaurant Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+/* ── Reset & Base ─────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:       #f5f2ee;
+  --bg2:      #edeae5;
+  --bg3:      #e4e0da;
+  --surface:  #ffffff;
+  --border:   rgba(0,0,0,0.08);
+  --border2:  rgba(0,0,0,0.14);
+  --text:     #1a1916;
+  --text2:    #6b6860;
+  --text3:    #a8a49e;
+  --ink:      #1a1916;
+  --accent:   #d44d1e;
+  --accent2:  #e8652e;
+  --acsoft:   rgba(212,77,30,0.1);
+  --green:    #2a7d4f;
+  --gsoft:    rgba(42,125,79,0.1);
+  --amber:    #b87a1a;
+  --asoft:    rgba(184,122,26,0.1);
+  --blue:     #1e5fa8;
+  --bsoft:    rgba(30,95,168,0.1);
+  --red:      #c0392b;
+  --rsoft:    rgba(192,57,43,0.1);
+  --r:        10px;
+  --r-sm:     6px;
+  --font-d:   'Syne', sans-serif;
+  --font-b:   'DM Sans', sans-serif;
+  --font-m:   'DM Mono', monospace;
+  --nav-w:    220px;
+  --header-h: 56px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+button{font-family:var(--font-b);cursor:pointer}
+input,select,textarea{font-family:var(--font-b)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
+
+/* ── Layout ───────────────────────────────────────── */
+.shell{display:grid;grid-template-columns:var(--nav-w) 1fr;grid-template-rows:var(--header-h) 1fr;min-height:100vh}
+
+/* ── Header ───────────────────────────────────────── */
+header{grid-column:1/-1;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px;position:sticky;top:0;z-index:100}
+.logo{font-family:var(--font-d);font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--text)}
+.logo span{color:var(--accent)}
+.logo sub{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);vertical-align:middle;margin-left:6px}
+.header-right{display:flex;align-items:center;gap:12px}
+.status-toggle{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.status-toggle.closed .status-dot{background:var(--red);animation:none}
+.open-btn,.close-btn{background:none;border:none;font-size:12px;font-weight:600;color:var(--green);padding:0}
+.status-toggle.closed .open-btn{color:var(--red)}
+.notif-btn{width:34px;height:34px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:16px;position:relative}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-m)}
+.avatar{width:34px;height:34px;border-radius:var(--r-sm);background:var(--acsoft);color:var(--accent);font-family:var(--font-d);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* ── Sidebar Nav ──────────────────────────────────── */
+nav{background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-sm);border:none;background:none;color:var(--text2);font-size:13px;font-weight:500;width:100%;text-align:left;transition:all 0.12s;position:relative}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--acsoft);color:var(--accent);font-weight:600}
+.nav-item .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;font-family:var(--font-m)}
+.nav-badge.green{background:var(--green)}
+.nav-badge.amber{background:var(--amber)}
+.nav-divider{border:none;border-top:1px solid var(--border);margin:8px 0}
+
+/* ── Main Content ─────────────────────────────────── */
+main{overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:0}
+.page{display:none;flex-direction:column;gap:20px;animation:fadein 0.2s ease}
+.page.active{display:flex}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.page-title{font-family:var(--font-d);font-size:22px;font-weight:800;letter-spacing:-0.5px}
+.page-sub{font-size:13px;color:var(--text2);margin-top:2px}
+
+/* ── Cards ────────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
+.card-title{font-family:var(--font-d);font-size:13px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
+
+/* ── Stat Cards ───────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(0,0,0,0.02));pointer-events:none}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text3)}
+.stat-value{font-family:var(--font-d);font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--text);margin:6px 0 4px;line-height:1}
+.stat-delta{font-size:12px;color:var(--green);font-weight:500}
+.stat-delta.neg{color:var(--red)}
+.stat-icon{position:absolute;right:14px;top:14px;font-size:22px;opacity:0.15}
+
+/* ── Buttons ──────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r-sm);font-size:13px;font-weight:500;border:none;transition:all 0.12s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg);color:var(--text)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{opacity:0.9}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{opacity:0.9}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* ── Order Queue ──────────────────────────────────── */
+.order-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
+.order-col-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.order-col-label{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3)}
+.order-col-count{font-family:var(--font-m);font-size:11px;background:var(--bg2);color:var(--text2);padding:2px 7px;border-radius:10px}
+.order-cards{display:flex;flex-direction:column;gap:10px;min-height:80px}
+.order-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;transition:border-color 0.15s}
+.order-card.new{border-color:rgba(212,77,30,0.4);box-shadow:0 0 0 3px rgba(212,77,30,0.06)}
+.order-card.ready{border-color:rgba(42,125,79,0.3)}
+.order-id{font-family:var(--font-m);font-size:11px;color:var(--text3);margin-bottom:6px}
+.order-items-list{font-size:13px;color:var(--text);margin-bottom:10px;line-height:1.6}
+.order-items-list strong{font-weight:600}
+.order-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.order-time{font-family:var(--font-m);font-size:11px;color:var(--text3)}
+.order-amt{font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--text)}
+.order-actions{display:flex;gap:6px}
+.order-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.5px}
+.tag-new{background:var(--acsoft);color:var(--accent)}
+.tag-prep{background:var(--asoft);color:var(--amber)}
+.tag-ready{background:var(--gsoft);color:var(--green)}
+.tag-multi{background:var(--bsoft);color:var(--blue);font-size:10px;padding:2px 6px;border-radius:8px;margin-left:4px}
+.timer{font-family:var(--font-m);font-size:12px;color:var(--amber);font-weight:500}
+.timer.urgent{color:var(--red)}
+
+/* ── Empty state ──────────────────────────────────── */
+.empty{text-align:center;padding:32px 16px;color:var(--text3);font-size:13px}
+.empty-icon{font-size:28px;margin-bottom:8px;opacity:0.4}
+
+/* ── Menu Management ──────────────────────────────── */
+.menu-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-input{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 12px;font-size:13px;color:var(--text);outline:none;width:220px;transition:border-color 0.15s}
+.search-input:focus{border-color:var(--border2)}
+.search-input::placeholder{color:var(--text3)}
+.menu-table{width:100%;border-collapse:collapse}
+.menu-table th{font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--text3);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0}
+.menu-table td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.menu-table tr:last-child td{border-bottom:none}
+.menu-table tr:hover td{background:var(--bg)}
+.item-name{font-weight:500;color:var(--text)}
+.item-cat{font-size:11px;color:var(--text3);margin-top:1px}
+.price-cell{font-family:var(--font-m);font-weight:500;color:var(--text)}
+.veg-dot{width:10px;height:10px;border-radius:2px;border:1.5px solid;display:inline-flex;align-items:center;justify-content:center}
+.veg-dot.veg{border-color:var(--green)}
+.veg-dot.veg::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--green)}
+.veg-dot.non{border-color:var(--red)}
+.veg-dot.non::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--red)}
+.toggle-switch{position:relative;width:36px;height:20px}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bg3);border-radius:10px;cursor:pointer;transition:0.2s}
+.toggle-slider::before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.2s}
+.toggle-switch input:checked+.toggle-slider{background:var(--green)}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(16px)}
+.cat-badge{font-size:11px;background:var(--bg2);color:var(--text2);padding:2px 8px;border-radius:8px}
+
+/* ── Modal ────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r);width:90%;max-width:480px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
+.modal-head{padding:20px 22px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:var(--font-d);font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;font-size:20px;color:var(--text3);line-height:1;padding:2px}
+.modal-body{padding:18px 22px 22px;display:flex;flex-direction:column;gap:14px}
+.form-row{display:flex;flex-direction:column;gap:5px}
+.form-row label{font-size:12px;font-weight:600;color:var(--text2)}
+.form-input{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 11px;font-size:13px;color:var(--text);outline:none;transition:border-color 0.15s;width:100%}
+.form-input:focus{border-color:var(--border2);background:var(--surface)}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;padding-top:4px}
+
+/* ── Analytics ────────────────────────────────────── */
+.analytics-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.chart-wrap{height:200px;position:relative;display:flex;align-items:flex-end;gap:6px;padding:8px 0 0}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height 0.4s cubic-bezier(0.34,1.56,0.64,1);cursor:pointer;position:relative}
+.bar:hover::after{content:attr(data-tip);position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;font-size:10px;font-family:var(--font-m);padding:2px 6px;border-radius:4px;white-space:nowrap;pointer-events:none}
+.bar-label{font-size:10px;color:var(--text3);font-family:var(--font-m)}
+.chart-grid{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;padding-bottom:24px}
+.chart-line{border-top:1px dashed var(--border);width:100%}
+.top-items{display:flex;flex-direction:column;gap:8px}
+.top-item{display:flex;align-items:center;gap:10px}
+.top-item-rank{font-family:var(--font-m);font-size:11px;color:var(--text3);width:16px}
+.top-item-bar-wrap{flex:1;background:var(--bg2);border-radius:4px;height:6px;overflow:hidden}
+.top-item-bar{height:100%;border-radius:4px;background:var(--accent)}
+.top-item-name{font-size:12px;color:var(--text);min-width:100px}
+.top-item-count{font-family:var(--font-m);font-size:12px;color:var(--text2);min-width:30px;text-align:right}
+.earnings-breakdown{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.earn-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border)}
+.earn-row:last-child{border-bottom:none;font-weight:600;font-family:var(--font-d)}
+.earn-label{color:var(--text2)}
+.earn-val{font-family:var(--font-m);color:var(--text)}
+.period-tabs{display:flex;gap:4px}
+.period-tab{background:none;border:1px solid var(--border);border-radius:var(--r-sm);padding:4px 10px;font-size:12px;color:var(--text2);transition:all 0.1s}
+.period-tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+/* ── Live Kitchen Status ──────────────────────────── */
+.kitchen-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.kitchen-order{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.kitchen-order.urgent{border-color:rgba(212,77,30,0.5);background:rgba(212,77,30,0.02)}
+.kitchen-order.done{border-color:rgba(42,125,79,0.3);opacity:0.7}
+.k-header{display:flex;align-items:center;justify-content:space-between}
+.k-id{font-family:var(--font-m);font-size:11px;color:var(--text3)}
+.k-timer{font-family:var(--font-m);font-size:13px;font-weight:500}
+.k-items{display:flex;flex-direction:column;gap:4px}
+.k-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.k-item-check{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.12s}
+.k-item-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.k-item-name{flex:1}
+.k-item-qty{font-family:var(--font-m);font-size:11px;color:var(--text3)}
+.k-progress{background:var(--bg2);border-radius:4px;height:4px;overflow:hidden}
+.k-progress-bar{height:100%;border-radius:4px;background:var(--green);transition:width 0.3s ease}
+.k-footer{display:flex;gap:8px}
+.pulse-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite;margin-right:4px}
+
+/* ── Notification Toast ───────────────────────────── */
+.toasts{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;box-shadow:0 4px 20px rgba(0,0,0,0.12);font-size:13px;display:flex;align-items:center;gap:10px;pointer-events:all;transform:translateX(120%);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);max-width:300px}
+.toast.show{transform:none}
+.toast-accent{width:3px;height:36px;border-radius:2px;flex-shrink:0}
+
+/* ── Responsive ───────────────────────────────────── */
+@media(max-width:900px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .order-cols{grid-template-columns:1fr}
+  .analytics-grid{grid-template-columns:1fr}
+  .kitchen-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  :root{--nav-w:0px}
+  nav{display:none}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- ── HEADER ─────────────────────────────────────── -->
+<header>
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="logo">fork<span>fleet</span><sub>kitchen</sub></div>
+    <div class="status-toggle" id="statusToggle">
+      <div class="status-dot"></div>
+      <span id="statusLabel">Open</span>
+      <button class="open-btn" id="statusBtn" onclick="toggleStatus()">Close restaurant</button>
+    </div>
+  </div>
+  <div class="header-right">
+    <div style="font-size:12px;color:var(--text2)">
+      <span style="font-weight:600;color:var(--text)" id="restName">Bukhara Tandoor</span>
+      <span style="margin:0 6px">·</span>Delhi
+    </div>
+    <button class="notif-btn" onclick="showPage('orders')">
+      🔔
+      <span class="notif-badge" id="notifBadge">3</span>
+    </button>
+    <div class="avatar">BT</div>
+  </div>
+</header>
+
+<!-- ── SIDEBAR ────────────────────────────────────── -->
+<nav>
+  <div class="nav-label">Operations</div>
+  <button class="nav-item active" data-page="orders" onclick="showPage('orders',this)">
+    <span class="nav-icon">📋</span> Order queue
+    <span class="nav-badge" id="newOrderCount">3</span>
+  </button>
+  <button class="nav-item" data-page="kitchen" onclick="showPage('kitchen',this)">
+    <span class="nav-icon">🍳</span> Kitchen status
+    <span class="nav-badge amber" id="kitchenCount">2</span>
+  </button>
+  <hr class="nav-divider"/>
+  <div class="nav-label">Management</div>
+  <button class="nav-item" data-page="menu" onclick="showPage('menu',this)">
+    <span class="nav-icon">🍽️</span> Menu
+  </button>
+  <button class="nav-item" data-page="analytics" onclick="showPage('analytics',this)">
+    <span class="nav-icon">📊</span> Analytics
+  </button>
+  <hr class="nav-divider"/>
+  <div class="nav-label">Account</div>
+  <button class="nav-item" onclick="showToast('Settings coming soon','var(--blue)')">
+    <span class="nav-icon">⚙️</span> Settings
+  </button>
+</nav>
+
+<!-- ── MAIN ───────────────────────────────────────── -->
+<main>
+
+  <!-- ════ ORDER QUEUE ════ -->
+  <div class="page active" id="page-orders">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Order queue</div>
+        <div class="page-sub">Real-time incoming orders · auto-updates every 30s</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:12px;color:var(--text3)"><span class="pulse-dot"></span>Live</span>
+        <button class="btn btn-ghost btn-sm" onclick="refreshOrders()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">New orders</div>
+        <div class="stat-value" id="statNew">3</div>
+        <div class="stat-delta">Awaiting acceptance</div>
+        <div class="stat-icon">🆕</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Preparing</div>
+        <div class="stat-value" id="statPrep">2</div>
+        <div class="stat-delta">In kitchen now</div>
+        <div class="stat-icon">🍳</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Ready</div>
+        <div class="stat-value" id="statReady">1</div>
+        <div class="stat-delta">Awaiting rider pickup</div>
+        <div class="stat-icon">✅</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today's orders</div>
+        <div class="stat-value">24</div>
+        <div class="stat-delta">+18% vs yesterday</div>
+        <div class="stat-icon">📦</div>
+      </div>
+    </div>
+
+    <div class="order-cols">
+      <!-- New -->
+      <div>
+        <div class="order-col-head">
+          <span class="order-col-label">🔴 New</span>
+          <span class="order-col-count" id="colNewCount">3</span>
+        </div>
+        <div class="order-cards" id="col-new"></div>
+      </div>
+      <!-- Preparing -->
+      <div>
+        <div class="order-col-head">
+          <span class="order-col-label">🟡 Preparing</span>
+          <span class="order-col-count" id="colPrepCount">2</span>
+        </div>
+        <div class="order-cards" id="col-preparing"></div>
+      </div>
+      <!-- Ready -->
+      <div>
+        <div class="order-col-head">
+          <span class="order-col-label">🟢 Ready</span>
+          <span class="order-col-count" id="colReadyCount">1</span>
+        </div>
+        <div class="order-cards" id="col-ready"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ KITCHEN STATUS ════ -->
+  <div class="page" id="page-kitchen">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Kitchen status</div>
+        <div class="page-sub">Check off items as they're prepared</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="renderKitchen()">↻ Sync</button>
+    </div>
+    <div class="kitchen-grid" id="kitchenGrid"></div>
+  </div>
+
+  <!-- ════ MENU MANAGEMENT ════ -->
+  <div class="page" id="page-menu">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Menu management</div>
+        <div class="page-sub" id="menuCount"></div>
+      </div>
+      <button class="btn btn-primary" onclick="openAddItem()">＋ Add item</button>
+    </div>
+
+    <div class="card" style="padding:12px 16px">
+      <div class="menu-toolbar">
+        <input class="search-input" type="text" placeholder="Search items…" oninput="filterMenu(this.value)" id="menuSearch"/>
+        <select class="search-input" style="width:160px" onchange="filterMenuCat(this.value)" id="catFilter">
+          <option value="">All categories</option>
+        </select>
+        <div style="margin-left:auto;font-size:12px;color:var(--text3)" id="menuFilterNote"></div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="menu-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Type</th>
+            <th>Available</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="menuTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════ ANALYTICS ════ -->
+  <div class="page" id="page-analytics">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Analytics & earnings</div>
+        <div class="page-sub">Performance overview for your restaurant</div>
+      </div>
+      <div class="period-tabs">
+        <button class="period-tab active" onclick="setPeriod('7d',this)">7 days</button>
+        <button class="period-tab" onclick="setPeriod('30d',this)">30 days</button>
+        <button class="period-tab" onclick="setPeriod('90d',this)">90 days</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Revenue</div>
+        <div class="stat-value" id="aRevenue">₹0</div>
+        <div class="stat-delta" id="aRevDelta"></div>
+        <div class="stat-icon">💰</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Orders</div>
+        <div class="stat-value" id="aOrders">0</div>
+        <div class="stat-delta" id="aOrdDelta"></div>
+        <div class="stat-icon">📦</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg order value</div>
+        <div class="stat-value" id="aAov">₹0</div>
+        <div class="stat-delta" id="aAovDelta"></div>
+        <div class="stat-icon">📈</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rating</div>
+        <div class="stat-value">4.5 ★</div>
+        <div class="stat-delta">Based on 312 reviews</div>
+        <div class="stat-icon">⭐</div>
+      </div>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="card">
+        <div class="card-title" id="chartTitle">Revenue — last 7 days</div>
+        <div style="position:relative;height:220px">
+          <div class="chart-grid" id="chartGrid"></div>
+          <div class="chart-wrap" id="chartBars" style="position:absolute;inset:0;padding-bottom:24px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top selling items</div>
+        <div class="top-items" id="topItems"></div>
+      </div>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="card">
+        <div class="card-title">Hourly order distribution</div>
+        <div style="position:relative;height:160px">
+          <div class="chart-wrap" id="hourlyBars" style="position:absolute;inset:0;padding-bottom:20px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Earnings breakdown</div>
+        <div class="earnings-breakdown" id="earningsBreak"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div><!-- shell -->
+
+<!-- ── ADD ITEM MODAL ─────────────────────────────── -->
+<div class="modal-overlay" id="addItemModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Add menu item</div>
+      <button class="modal-close" onclick="closeModal('addItemModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>Item name *</label>
+        <input class="form-input" id="fi-name" placeholder="e.g. Butter Chicken"/>
+      </div>
+      <div class="form-row">
+        <label>Description</label>
+        <input class="form-input" id="fi-desc" placeholder="Brief description of the dish"/>
+      </div>
+      <div class="form-row-2">
+        <div class="form-row">
+          <label>Price (₹) *</label>
+          <input class="form-input" id="fi-price" type="number" min="0" placeholder="299"/>
+        </div>
+        <div class="form-row">
+          <label>Category</label>
+          <select class="form-input" id="fi-cat">
+            <option value="Mains">Mains</option>
+            <option value="Starters">Starters</option>
+            <option value="Breads">Breads</option>
+            <option value="Desserts">Desserts</option>
+            <option value="Beverages">Beverages</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Type</label>
+        <div style="display:flex;gap:12px;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;cursor:pointer">
+            <input type="radio" name="fi-veg" value="veg" checked/> Vegetarian
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;cursor:pointer">
+            <input type="radio" name="fi-veg" value="non"/> Non-vegetarian
+          </label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('addItemModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveItem()">Save item</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOASTS ─────────────────────────────────────── -->
+<div class="toasts" id="toasts"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════════════
+
+let orders = [
+  {id:'FF-20481',status:'new',items:[{n:'Butter Chicken',q:2},{n:'Garlic Naan',q:3}],total:820,time:Date.now()-180000,multi:true,est:25},
+  {id:'FF-20479',status:'new',items:[{n:'Dal Makhani',q:1},{n:'Lachha Paratha',q:2}],total:340,time:Date.now()-240000,multi:false,est:20},
+  {id:'FF-20477',status:'new',items:[{n:'Lamb Rogan Josh',q:1}],total:380,time:Date.now()-60000,multi:true,est:35},
+  {id:'FF-20475',status:'preparing',items:[{n:'Paneer Makhani',q:2},{n:'Garlic Naan',q:4}],total:820,time:Date.now()-600000,multi:false,est:15,elapsed:10},
+  {id:'FF-20473',status:'preparing',items:[{n:'Butter Chicken',q:1},{n:'Dal Makhani',q:1}],total:560,time:Date.now()-720000,multi:true,est:20,elapsed:15},
+  {id:'FF-20470',status:'ready',items:[{n:'Lamb Rogan Josh',q:2}],total:760,time:Date.now()-1200000,multi:false,est:0},
+];
+
+let menuItems = [
+  {id:1,name:'Butter Chicken',desc:'Slow-cooked in rich tomato gravy',price:320,veg:false,cat:'Mains',available:true},
+  {id:2,name:'Dal Makhani',desc:'Overnight simmered black lentils',price:240,veg:true,cat:'Mains',available:true},
+  {id:3,name:'Lamb Rogan Josh',desc:'Kashmiri spiced slow-cook',price:380,veg:false,cat:'Mains',available:true},
+  {id:4,name:'Paneer Makhani',desc:'Cottage cheese in tomato gravy',price:290,veg:true,cat:'Mains',available:true},
+  {id:5,name:'Garlic Naan',desc:'Tandoor-baked with butter',price:60,veg:true,cat:'Breads',available:true},
+  {id:6,name:'Lachha Paratha',desc:'Flaky whole-wheat flatbread',price:50,veg:true,cat:'Breads',available:true},
+  {id:7,name:'Shahi Paneer',desc:'Cottage cheese in cream gravy',price:310,veg:true,cat:'Mains',available:false},
+  {id:8,name:'Mango Lassi',desc:'Chilled alphonso mango yogurt drink',price:90,veg:true,cat:'Beverages',available:true},
+  {id:9,name:'Tandoori Chicken',desc:'Whole leg marinated in yogurt',price:340,veg:false,cat:'Starters',available:true},
+  {id:10,name:'Samosa (2 pcs)',desc:'Crispy pastry with spiced potato',price:70,veg:true,cat:'Starters',available:true},
+];
+
+let kitchenOrders = [
+  {id:'FF-20475',urgent:false,items:[
+    {n:'Paneer Makhani',q:2,done:true},
+    {n:'Garlic Naan',q:4,done:false}
+  ],elapsed:10,est:15},
+  {id:'FF-20473',urgent:true,items:[
+    {n:'Butter Chicken',q:1,done:false},
+    {n:'Dal Makhani',q:1,done:false}
+  ],elapsed:15,est:20},
+];
+
+const ANALYTICS = {
+  '7d':  {revenue:38420,orders:124,aov:310,revData:[4200,5100,4800,6200,5400,6800,5920],labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],prevRev:32100,prevOrd:98},
+  '30d': {revenue:162400,orders:524,aov:310,revData:[22000,28000,19000,31000,26000,36200],labels:['Wk1','Wk2','Wk3','Wk4','Wk5','Wk6'],prevRev:141000,prevOrd:449},
+  '90d': {revenue:486000,orders:1580,aov:308,revData:[145000,162000,179000],labels:['Jan','Feb','Mar'],prevRev:420000,prevOrd:1360},
+};
+const TOP_ITEMS = [
+  {name:'Butter Chicken',count:284},
+  {name:'Garlic Naan',count:256},
+  {name:'Dal Makhani',count:198},
+  {name:'Lamb Rogan Josh',count:142},
+  {name:'Tandoori Chicken',count:118},
+];
+const HOURLY = [0,0,0,0,0,0,2,8,18,32,45,38,52,48,30,26,40,60,72,65,42,28,12,4];
+
+let currentPeriod = '7d';
+let isOpen = true;
+let editingItemId = null;
+let menuFilter = '';
+let menuCatFilter = '';
+
+// ══════════════════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════════════════
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    const navBtn = document.querySelector(`[data-page="${name}"]`);
+    if (navBtn) navBtn.classList.add('active');
+  }
+  if (name === 'orders')    renderOrders();
+  if (name === 'kitchen')   renderKitchen();
+  if (name === 'menu')      renderMenu();
+  if (name === 'analytics') renderAnalytics(currentPeriod);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ORDER QUEUE
+// ══════════════════════════════════════════════════════════════
+
+function elapsed(ts) {
+  const m = Math.floor((Date.now()-ts)/60000);
+  return m < 1 ? 'Just now' : m === 1 ? '1 min ago' : `${m} mins ago`;
+}
+
+function renderOrders() {
+  const cols = {new:[],preparing:[],ready:[]};
+  orders.forEach(o => { if(cols[o.status]) cols[o.status].push(o); });
+
+  document.getElementById('statNew').textContent = cols.new.length;
+  document.getElementById('statPrep').textContent = cols.preparing.length;
+  document.getElementById('statReady').textContent = cols.ready.length;
+  document.getElementById('newOrderCount').textContent = cols.new.length;
+  document.getElementById('kitchenCount').textContent = cols.preparing.length;
+  document.getElementById('notifBadge').textContent = cols.new.length;
+  document.getElementById('colNewCount').textContent = cols.new.length;
+  document.getElementById('colPrepCount').textContent = cols.preparing.length;
+  document.getElementById('colReadyCount').textContent = cols.ready.length;
+
+  renderCol('col-new', cols.new, 'new');
+  renderCol('col-preparing', cols.preparing, 'preparing');
+  renderCol('col-ready', cols.ready, 'ready');
+}
+
+function renderCol(colId, list, status) {
+  const col = document.getElementById(colId);
+  if (!list.length) { col.innerHTML = `<div class="empty"><div class="empty-icon">${status==='ready'?'✅':status==='preparing'?'🍳':'📭'}</div>No orders</div>`; return; }
+  col.innerHTML = list.map(o => {
+    const mins = Math.floor((Date.now()-o.time)/60000);
+    const urgent = status==='new' && mins > 3;
+    const tagClass = {new:'tag-new',preparing:'tag-prep',ready:'tag-ready'}[status];
+    const tagLabel = {new:'New order',preparing:'Preparing',ready:'Ready'}[status];
+    let actions = '';
+    if (status === 'new') {
+      actions = `<button class="btn btn-green btn-sm" onclick="acceptOrder('${o.id}')">✓ Accept</button>
+                 <button class="btn btn-ghost btn-sm" onclick="rejectOrder('${o.id}')">Reject</button>`;
+    } else if (status === 'preparing') {
+      actions = `<button class="btn btn-primary btn-sm" style="width:100%" onclick="markReady('${o.id}')">Mark as ready →</button>`;
+    } else {
+      actions = `<div style="font-size:12px;color:var(--text3);text-align:center;width:100%">Awaiting rider pickup</div>`;
+    }
+    return `<div class="order-card ${status==='new'?'new':''} ${status==='ready'?'ready':''}" id="oc-${o.id}">
+      <div class="order-id">${o.id} ${o.multi?'<span class="tag-multi">multi-rest</span>':''}</div>
+      <div class="order-items-list">${o.items.map(i=>`<strong>${i.q}×</strong> ${i.n}`).join('<br/>')}</div>
+      <div class="order-meta">
+        <span class="order-time ${urgent?'timer urgent':'timer'}">${elapsed(o.time)}</span>
+        <span class="order-amt">₹${o.total}</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span class="order-tag ${tagClass}">${tagLabel}</span>
+        ${status==='preparing'?`<span class="timer ${mins>20?'urgent':''}">~${Math.max(0,o.est-(Date.now()-o.time)/60000|0)} min left</span>`:''}
+      </div>
+      <div class="order-actions">${actions}</div>
+    </div>`;
+  }).join('');
+}
+
+function acceptOrder(id) {
+  const o = orders.find(x=>x.id===id);
+  if (!o) return;
+  o.status = 'preparing';
+  o.elapsed = 0;
+  kitchenOrders.push({id:o.id,urgent:false,items:o.items.map(i=>({n:i.n,q:i.q,done:false})),elapsed:0,est:o.est});
+  renderOrders();
+  renderKitchen();
+  showToast(`Order ${id} accepted — kitchen notified`, 'var(--green)');
+}
+
+function rejectOrder(id) {
+  orders = orders.filter(o => o.id !== id);
+  renderOrders();
+  showToast(`Order ${id} rejected`, 'var(--red)');
+}
+
+function markReady(id) {
+  const o = orders.find(x=>x.id===id);
+  if (!o) return;
+  o.status = 'ready';
+  kitchenOrders = kitchenOrders.filter(k => k.id !== id);
+  renderOrders();
+  renderKitchen();
+  showToast(`Order ${id} is ready for pickup!`, 'var(--green)');
+}
+
+function refreshOrders() {
+  // Simulate new order arriving
+  const fakeId = 'FF-2048'+Math.floor(Math.random()*9);
+  const newItems = [[{n:'Paneer Tikka',q:1},{n:'Butter Naan',q:2}],[{n:'Dal Makhani',q:2}]];
+  orders.unshift({
+    id: fakeId, status:'new',
+    items: newItems[Math.floor(Math.random()*newItems.length)],
+    total: Math.floor(300+Math.random()*400),
+    time: Date.now(), multi: Math.random()>0.5, est:25
+  });
+  renderOrders();
+  showToast(`New order ${fakeId} received!`, 'var(--accent)');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  KITCHEN STATUS
+// ══════════════════════════════════════════════════════════════
+
+function renderKitchen() {
+  const grid = document.getElementById('kitchenGrid');
+  if (!kitchenOrders.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🍳</div>No active orders in kitchen</div>`;
+    return;
+  }
+  grid.innerHTML = kitchenOrders.map((ko,ki) => {
+    const done = ko.items.filter(i=>i.done).length;
+    const total = ko.items.length;
+    const pct = Math.round(done/total*100);
+    const mins = Math.floor((Date.now()- (orders.find(o=>o.id===ko.id)?.time || Date.now()))/60000);
+    const urgent = mins > (ko.est * 0.75);
+    return `<div class="kitchen-order ${urgent?'urgent':''}">
+      <div class="k-header">
+        <span class="k-id">${ko.id}${orders.find(o=>o.id===ko.id)?.multi?` <span class="tag-multi">multi</span>`:''}</span>
+        <span class="k-timer ${urgent?'timer urgent':'timer'}">~${Math.max(0,ko.est-mins)} min left</span>
+      </div>
+      <div class="k-items">
+        ${ko.items.map((item,ii)=>`
+          <div class="k-item">
+            <div class="k-item-check ${item.done?'done':''}" onclick="toggleKitchenItem(${ki},${ii})">
+              ${item.done?'✓':''}
+            </div>
+            <span class="k-item-name" style="${item.done?'text-decoration:line-through;opacity:0.5':''}">
+              ${item.n}
+            </span>
+            <span class="k-item-qty">×${item.q}</span>
+          </div>`).join('')}
+      </div>
+      <div class="k-progress">
+        <div class="k-progress-bar" style="width:${pct}%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--text3)">${done}/${total} items done</span>
+        ${done===total ? `<button class="btn btn-green btn-sm" onclick="markReady('${ko.id}')">Mark ready →</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleKitchenItem(ki, ii) {
+  kitchenOrders[ki].items[ii].done = !kitchenOrders[ki].items[ii].done;
+  renderKitchen();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MENU MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+
+function renderMenu() {
+  // Populate category filter
+  const cats = [...new Set(menuItems.map(i=>i.cat))].sort();
+  const catSel = document.getElementById('catFilter');
+  catSel.innerHTML = '<option value="">All categories</option>' +
+    cats.map(c=>`<option value="${c}" ${menuCatFilter===c?'selected':''}>${c}</option>`).join('');
+
+  let filtered = menuItems;
+  if (menuFilter) filtered = filtered.filter(i =>
+    i.name.toLowerCase().includes(menuFilter) ||
+    (i.desc||'').toLowerCase().includes(menuFilter));
+  if (menuCatFilter) filtered = filtered.filter(i => i.cat === menuCatFilter);
+
+  document.getElementById('menuCount').textContent =
+    `${filtered.length} item${filtered.length!==1?'s':''} · ${cats.length} categories`;
+
+  const note = document.getElementById('menuFilterNote');
+  note.textContent = (menuFilter||menuCatFilter) ? `Showing ${filtered.length} of ${menuItems.length}` : '';
+
+  const tbody = document.getElementById('menuTableBody');
+  tbody.innerHTML = filtered.map(item => `
+    <tr>
+      <td>
+        <div class="item-name">${item.name}</div>
+        <div class="item-cat">${item.desc||''}</div>
+      </td>
+      <td><span class="cat-badge">${item.cat}</span></td>
+      <td class="price-cell">₹${item.price}</td>
+      <td><div class="veg-dot ${item.veg?'veg':'non'}"></div></td>
+      <td>
+        <label class="toggle-switch">
+          <input type="checkbox" ${item.available?'checked':''} onchange="toggleAvail(${item.id},this.checked)"/>
+          <span class="toggle-slider"></span>
+        </label>
+      </td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="editItem(${item.id})">Edit</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteItem(${item.id})">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3)">No items found</td></tr>`;
+  }
+}
+
+function filterMenu(q) { menuFilter = q.toLowerCase(); renderMenu(); }
+function filterMenuCat(v) { menuCatFilter = v; renderMenu(); }
+
+function toggleAvail(id, val) {
+  const item = menuItems.find(i=>i.id===id);
+  if (!item) return;
+  item.available = val;
+  showToast(`${item.name} marked as ${val?'available':'unavailable'}`, val?'var(--green)':'var(--amber)');
+}
+
+function deleteItem(id) {
+  const item = menuItems.find(i=>i.id===id);
+  if (!item) return;
+  if (!confirm(`Delete "${item.name}"?`)) return;
+  menuItems = menuItems.filter(i=>i.id!==id);
+  renderMenu();
+  showToast(`${item.name} deleted`, 'var(--red)');
+}
+
+function openAddItem() {
+  editingItemId = null;
+  document.getElementById('modalTitle').textContent = 'Add menu item';
+  document.getElementById('fi-name').value = '';
+  document.getElementById('fi-desc').value = '';
+  document.getElementById('fi-price').value = '';
+  document.querySelector('input[name="fi-veg"][value="veg"]').checked = true;
+  document.getElementById('addItemModal').classList.add('open');
+}
+
+function editItem(id) {
+  const item = menuItems.find(i=>i.id===id);
+  if (!item) return;
+  editingItemId = id;
+  document.getElementById('modalTitle').textContent = 'Edit menu item';
+  document.getElementById('fi-name').value = item.name;
+  document.getElementById('fi-desc').value = item.desc||'';
+  document.getElementById('fi-price').value = item.price;
+  document.getElementById('fi-cat').value = item.cat;
+  document.querySelector(`input[name="fi-veg"][value="${item.veg?'veg':'non'}"]`).checked = true;
+  document.getElementById('addItemModal').classList.add('open');
+}
+
+function saveItem() {
+  const name  = document.getElementById('fi-name').value.trim();
+  const desc  = document.getElementById('fi-desc').value.trim();
+  const price = parseFloat(document.getElementById('fi-price').value);
+  const cat   = document.getElementById('fi-cat').value;
+  const veg   = document.querySelector('input[name="fi-veg"]:checked').value === 'veg';
+  if (!name || isNaN(price) || price < 0) {
+    showToast('Please fill in name and valid price', 'var(--red)'); return;
+  }
+  if (editingItemId) {
+    const item = menuItems.find(i=>i.id===editingItemId);
+    Object.assign(item, {name,desc,price,cat,veg});
+    showToast(`${name} updated`, 'var(--green)');
+  } else {
+    menuItems.push({id:Date.now(),name,desc,price,cat,veg,available:true});
+    showToast(`${name} added to menu`, 'var(--green)');
+  }
+  closeModal('addItemModal');
+  renderMenu();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ══════════════════════════════════════════════════════════════
+//  ANALYTICS
+// ══════════════════════════════════════════════════════════════
+
+function setPeriod(p, btn) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAnalytics(p);
+}
+
+function renderAnalytics(period) {
+  const d = ANALYTICS[period];
+  const revDelta = ((d.revenue - d.prevRev) / d.prevRev * 100).toFixed(1);
+  const ordDelta = ((d.orders - d.prevOrd) / d.prevOrd * 100).toFixed(1);
+
+  document.getElementById('aRevenue').textContent = '₹'+d.revenue.toLocaleString();
+  document.getElementById('aOrders').textContent = d.orders;
+  document.getElementById('aAov').textContent = '₹'+d.aov;
+  document.getElementById('aRevDelta').textContent = `${revDelta>0?'+':''}${revDelta}% vs previous period`;
+  document.getElementById('aRevDelta').className = 'stat-delta' + (revDelta<0?' neg':'');
+  document.getElementById('aOrdDelta').textContent = `${ordDelta>0?'+':''}${ordDelta}% vs previous period`;
+  document.getElementById('aOrdDelta').className = 'stat-delta' + (ordDelta<0?' neg':'');
+  document.getElementById('aAovDelta').textContent = `Per completed order`;
+
+  const labelMap = {'7d':'Revenue — last 7 days','30d':'Revenue — last 30 days','90d':'Revenue — last 90 days'};
+  document.getElementById('chartTitle').textContent = labelMap[period];
+
+  // Revenue bars
+  const maxV = Math.max(...d.revData);
+  const gridLines = 4;
+  document.getElementById('chartGrid').innerHTML = Array.from({length:gridLines+1},(_,i)=>
+    `<div class="chart-line" style="opacity:${i===gridLines?0:0.6}"></div>`).join('');
+
+  document.getElementById('chartBars').innerHTML = d.revData.map((v,i)=>{
+    const h = Math.round((v/maxV)*100);
+    const tip = '₹'+v.toLocaleString();
+    return `<div class="bar-group">
+      <div class="bar" style="height:${h}%;background:${h>80?'var(--accent)':'var(--bg3)'};transition:height 0.4s ${i*0.05}s" data-tip="${tip}"></div>
+      <div class="bar-label">${d.labels[i]}</div>
+    </div>`;
+  }).join('');
+
+  // Top items
+  const maxC = TOP_ITEMS[0].count;
+  document.getElementById('topItems').innerHTML = TOP_ITEMS.map((t,i)=>`
+    <div class="top-item">
+      <span class="top-item-rank">${i+1}</span>
+      <span class="top-item-name">${t.name}</span>
+      <div class="top-item-bar-wrap">
+        <div class="top-item-bar" style="width:${Math.round(t.count/maxC*100)}%;transition:width 0.5s ${i*0.08}s"></div>
+      </div>
+      <span class="top-item-count">${t.count}</span>
+    </div>`).join('');
+
+  // Hourly bars
+  const slice = HOURLY.slice(8,22);
+  const maxH = Math.max(...slice);
+  const hours = Array.from({length:14},(_,i)=>`${8+i}:00`);
+  document.getElementById('hourlyBars').innerHTML = slice.map((v,i)=>`
+    <div class="bar-group">
+      <div class="bar" style="height:${Math.round((v/maxH)*100)}%;background:var(--blue);opacity:0.7;transition:height 0.4s ${i*0.03}s" data-tip="${v} orders"></div>
+      <div class="bar-label" style="font-size:9px">${i%2===0?hours[i]:''}</div>
+    </div>`).join('');
+
+  // Earnings
+  const gross = d.revenue;
+  const commission = Math.round(gross * 0.15);
+  const delivery = Math.round(d.orders * 30);
+  const tax = Math.round(gross * 0.18);
+  const net = gross - commission - tax + delivery;
+  document.getElementById('earningsBreak').innerHTML = [
+    ['Gross revenue', '₹'+gross.toLocaleString()],
+    ['Platform commission (15%)', '-₹'+commission.toLocaleString()],
+    ['Delivery fee credits', '+₹'+delivery.toLocaleString()],
+    ['GST deducted (18%)', '-₹'+tax.toLocaleString()],
+    ['Net payout', '₹'+net.toLocaleString()],
+  ].map(([l,v])=>`<div class="earn-row"><span class="earn-label">${l}</span><span class="earn-val">${v}</span></div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RESTAURANT STATUS TOGGLE
+// ══════════════════════════════════════════════════════════════
+
+function toggleStatus() {
+  isOpen = !isOpen;
+  const toggle = document.getElementById('statusToggle');
+  const label  = document.getElementById('statusLabel');
+  const btn    = document.getElementById('statusBtn');
+  toggle.classList.toggle('closed', !isOpen);
+  label.textContent = isOpen ? 'Open' : 'Closed';
+  btn.textContent   = isOpen ? 'Close restaurant' : 'Open restaurant';
+  showToast(isOpen ? 'Restaurant is now open' : 'Restaurant is now closed — no new orders will be accepted',
+    isOpen ? 'var(--green)' : 'var(--red)');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TOASTS
+// ══════════════════════════════════════════════════════════════
+
+function showToast(msg, color = 'var(--accent)') {
+  const wrap = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<div class="toast-accent" style="background:${color}"></div><span>${msg}</span>`;
+  wrap.appendChild(el);
+  requestAnimationFrame(()=>{ el.classList.add('show'); });
+  setTimeout(()=>{
+    el.classList.remove('show');
+    setTimeout(()=>el.remove(), 400);
+  }, 3500);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LIVE SIMULATION — new order every 45s
+// ══════════════════════════════════════════════════════════════
+
+const FAKE_ORDERS = [
+  [{n:'Butter Chicken',q:1},{n:'Garlic Naan',q:2}],
+  [{n:'Dal Makhani',q:2}],
+  [{n:'Tandoori Chicken',q:1},{n:'Mango Lassi',q:2}],
+  [{n:'Paneer Makhani',q:1},{n:'Lachha Paratha',q:3}],
+];
+
+setInterval(()=>{
+  if (!isOpen) return;
+  const items = FAKE_ORDERS[Math.floor(Math.random()*FAKE_ORDERS.length)];
+  const total = items.reduce((s,i)=>{
+    const found = menuItems.find(m=>m.name===i.n);
+    return s + (found?found.price:200)*i.q;
+  },0);
+  const id = 'FF-2'+(Math.floor(Math.random()*9000)+1000);
+  orders.unshift({id,status:'new',items,total,time:Date.now(),multi:Math.random()>0.6,est:20+Math.floor(Math.random()*15)});
+  if (document.getElementById('page-orders').classList.contains('active')) renderOrders();
+  showToast(`New order ${id} received!`, 'var(--accent)');
+}, 45000);
+
+// Timers update every minute
+setInterval(()=>{
+  if (document.getElementById('page-orders').classList.contains('active')) renderOrders();
+  if (document.getElementById('page-kitchen').classList.contains('active')) renderKitchen();
+}, 60000);
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+
+renderOrders();
+renderMenu();
+
+// Close modal on overlay click
+document.getElementById('addItemModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal('addItemModal');
+});
+</script>
+</body>
+</html>
