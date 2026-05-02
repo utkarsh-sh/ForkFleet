@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ForkFleet — Checkout</title>
+<!-- Razorpay SDK — load once at app level -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0d0d0d;--surface:#1a1a1a;--border:rgba(255,255,255,0.08);--text:#f2efe9;--text2:#8a8780;--text3:#4a4845;--accent:#f0541e;--green:#2ecc71;--red:#e74c3c;--r:12px;--r-sm:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.checkout-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px 28px 24px;width:100%;max-width:440px}
+.logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:20px}
+.logo span{color:var(--accent)}
+.order-summary{background:var(--bg);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:20px}
+.summary-title{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.rest-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px}
+.rest-row:last-of-type{border-bottom:none}
+.rest-name{color:var(--text2)}
+.rest-sub{font-family:'DM Mono',monospace;font-size:12px;color:var(--text)}
+.fee-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:var(--text3);margin-top:4px}
+.total-row{display:flex;justify-content:space-between;font-size:16px;font-weight:600;padding:10px 0 0;margin-top:4px;border-top:1px solid var(--border)}
+.total-val{font-family:'Syne',sans-serif;font-size:18px;color:var(--text)}
+.pay-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);padding:15px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:0.3px}
+.pay-btn:hover:not(:disabled){background:#ff6b35}
+.pay-btn:disabled{opacity:0.5;cursor:not-allowed}
+.pay-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.status-msg{margin-top:14px;padding:12px 14px;border-radius:var(--r-sm);font-size:13px;display:none;align-items:flex-start;gap:10px}
+.status-msg.show{display:flex}
+.status-msg.success{background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.25);color:var(--green)}
+.status-msg.error{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.25);color:var(--red)}
+.status-msg.loading{background:rgba(240,84,30,0.08);border:1px solid rgba(240,84,30,0.2);color:var(--accent)}
+.upi-note{font-size:11px;color:var(--text3);text-align:center;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px}
+.spinner{width:16px;height:16px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.secure-badge{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:11px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="checkout-card">
+  <div class="logo">fork<span>fleet</span></div>
+
+  <div class="order-summary">
+    <div class="summary-title">Order summary</div>
+    <div id="orderLines"></div>
+    <div id="feeLines" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px"></div>
+    <div class="total-row">
+      <span>Total</span>
+      <span class="total-val" id="grandTotal">₹0</span>
+    </div>
+  </div>
+
+  <button class="pay-btn" id="payBtn" onclick="startCheckout()">
+    <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    Pay now
+  </button>
+
+  <div class="status-msg" id="statusMsg"></div>
+
+  <div class="upi-note">
+    UPI · Cards · Netbanking · Wallets accepted
+  </div>
+  <div class="secure-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    256-bit SSL encrypted · Powered by Razorpay
+  </div>
+</div>
+
+<script>
+// ─── Config ─────────────────────────────────────────────────────────────────
+// In production these come from your backend / URL params / app state
+const API_BASE   = 'http://localhost:4000/api/v1';
+const ORDER_ID   = new URLSearchParams(location.search).get('order_id') || 'demo-order-id';
+const AUTH_TOKEN = localStorage.getItem('ff_access_token') || '';
+
+// ─── State ───────────────────────────────────────────────────────────────────
+let rzpOrderData  = null;   // from POST /payments/initiate
+let orderSummary  = null;   // from GET /orders/:id
+
+// ─── Initialise ──────────────────────────────────────────────────────────────
+async function init() {
+  // Demo data when running standalone (replace with real API calls in production)
+  orderSummary = {
+    restaurants: [
+      { name: 'Bukhara Tandoor', subtotal: 64000 },
+      { name: 'Dragon Palace',   subtotal: 26000 },
+    ],
+    delivery_fee: 6000,
+    tax_amount:   4500,
+    grand_total:  96500,  // paise
+  };
+  renderSummary(orderSummary);
+}
+
+function renderSummary(summary) {
+  const paise2rupee = (p) => '₹' + (p / 100).toLocaleString('en-IN');
+
+  document.getElementById('orderLines').innerHTML =
+    (summary.restaurants || []).map(r =>
+      `<div class="rest-row">
+        <span class="rest-name">${r.name}</span>
+        <span class="rest-sub">${paise2rupee(r.subtotal)}</span>
+      </div>`
+    ).join('');
+
+  document.getElementById('feeLines').innerHTML =
+    `<div class="fee-row"><span>Delivery fee</span><span>${paise2rupee(summary.delivery_fee)}</span></div>
+     <div class="fee-row"><span>Taxes & GST</span><span>${paise2rupee(summary.tax_amount)}</span></div>`;
+
+  document.getElementById('grandTotal').textContent = paise2rupee(summary.grand_total);
+}
+
+// ─── Checkout flow ────────────────────────────────────────────────────────────
+async function startCheckout() {
+  setStatus('loading', 'Connecting to payment gateway…');
+  document.getElementById('payBtn').disabled = true;
+
+  try {
+    // Step 1: Get Razorpay order from backend
+    rzpOrderData = await initiatePayment();
+
+    // Step 2: Open Razorpay modal
+    openRazorpay(rzpOrderData);
+  } catch (err) {
+    setStatus('error', 'Could not connect to payment gateway. Please try again.');
+    document.getElementById('payBtn').disabled = false;
+    console.error('Checkout error:', err);
+  }
+}
+
+async function initiatePayment() {
+  const res = await fetch(`${API_BASE}/payments/initiate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify({ order_id: ORDER_ID }),
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.message);
+  return data.data;
+}
+
+function openRazorpay(data) {
+  const options = {
+    key:         data.key_id,
+    amount:      data.amount,            // paise
+    currency:    data.currency || 'INR',
+    name:        'ForkFleet',
+    description: data.description || 'Multi-restaurant food order',
+    order_id:    data.razorpay_order_id,
+    image:       '',                     // logo URL
+    prefill:     data.prefill || {},
+    theme:       { color: '#F0541E' },   // matches ForkFleet accent
+
+    // ── Handler: payment succeeded ──────────────────────────────────────────
+    handler: async function(response) {
+      setStatus('loading', 'Verifying payment…');
+      try {
+        await verifyPayment(response);
+        setStatus('success', '🎉 Payment successful! Your order is confirmed. Kitchens are being notified.');
+        document.getElementById('payBtn').style.display = 'none';
+
+        // Redirect to order tracking after 2s
+        setTimeout(() => {
+          window.location.href = `/track?order_id=${ORDER_ID}`;
+        }, 2000);
+      } catch (err) {
+        setStatus('error', `Payment verification failed: ${err.message}. Please contact support if amount was deducted.`);
+        document.getElementById('payBtn').disabled = false;
+      }
+    },
+
+    // ── Handler: modal dismissed ────────────────────────────────────────────
+    modal: {
+      ondismiss: function() {
+        setStatus('error', 'Payment cancelled. You can try again anytime — your order is saved.');
+        document.getElementById('payBtn').disabled = false;
+      },
+    },
+  };
+
+  const rzp = new window.Razorpay(options);
+
+  // ── Payment failed inside Razorpay modal ────────────────────────────────
+  rzp.on('payment.failed', function(response) {
+    const err = response.error;
+    setStatus('error', `Payment failed: ${err.description} (${err.code}). Please try a different payment method.`);
+    document.getElementById('payBtn').disabled = false;
+
+    // Notify backend of failure
+    fetch(`${API_BASE}/payments/webhook`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event: 'payment.failed', data: err }),
+    }).catch(() => {});
+  });
+
+  rzp.open();
+  setStatus('', '');  // clear loading state while modal is open
+}
+
+async function verifyPayment({ razorpay_order_id, razorpay_payment_id, razorpay_signature }) {
+  const res = await fetch(`${API_BASE}/payments/verify`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify({ razorpay_order_id, razorpay_payment_id, razorpay_signature }),
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.message);
+  return data.data;
+}
+
+// ─── UI helpers ──────────────────────────────────────────────────────────────
+function setStatus(type, msg) {
+  const el = document.getElementById('statusMsg');
+  el.className = 'status-msg' + (type ? ` ${type} show` : '');
+  el.innerHTML = type === 'loading'
+    ? `<div class="spinner"></div><span>${msg}</span>`
+    : type
+      ? `<span>${msg}</span>`
+      : '';
+}
+
+init();
+</script>
+</body>
+</html>
