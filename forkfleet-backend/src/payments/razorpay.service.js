@@ -58,7 +58,16 @@ function verifyPaymentSignature(razorpay_order_id, razorpay_payment_id, razorpay
     .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
     .update(body)
     .digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(expected, 'hex'), Buffer.from(razorpay_signature, 'hex'));
+
+  try {
+    const expectedBuf = Buffer.from(expected, 'hex');
+    const actualBuf = Buffer.from(String(razorpay_signature || ''), 'hex');
+
+    if (expectedBuf.length !== actualBuf.length) return false;
+    return crypto.timingSafeEqual(expectedBuf, actualBuf);
+  } catch {
+    return false;
+  }
 }
 
 async function confirmPayment({ razorpay_order_id, razorpay_payment_id, razorpay_signature, method }) {

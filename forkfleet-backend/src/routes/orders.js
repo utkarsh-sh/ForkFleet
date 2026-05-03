@@ -1,6 +1,5 @@
 const router = require('express').Router();
-const crypto = require('crypto');
-const { body, param } = require('express-validator');
+const { body } = require('express-validator');
 const db = require('../db');
 const { publishOrderEvent } = require('../db/redis');
 const orderSplitter = require('../services/orderSplitting');
@@ -180,83 +179,5 @@ router.post(
     }
   }
 );
-
-// ── POST /orders/webhook/razorpay — Razorpay payment confirmation ─────────────
-
-router.post('/webhook/razorpay', async (req, res) => {
-  const signature = req.headers['x-razorpay-signature'];
-  const body = JSON.stringify(req.body);
-
-  // Verify signature
-  const expected = crypto
-    .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
-    .update(body)
-    .digest('hex');
-
-  if (signature !== expected) {
-    logger.warn('Invalid Razorpay webhook signature');
-    return res.status(400).json({ error: 'Invalid signature' });
-  }
-
-  const event = req.body.event;
-  const payload = req.body.payload?.payment?.entity;
-
-  try {
-    if (event === 'payment.captured') {
-      await db.withTransaction(async (client) => {
-        // Update payment record
-        await client.query(
-          `UPDATE payments SET status='captured', razorpay_payment_id=$1,
-           razorpay_signature=$2, method=$3, captured_at=NOW()
-           WHERE razorpay_order_id=$4`,
-          [payload.id, signature, payload.method, payload.order_id]
-        );
-
-        // Get the order
-        const { rows } = await client.query(
-          'SELECT order_id FROM payments WHERE razorpay_order_id=$1', [payload.order_id]
-        );
-        if (!rows.length) return;
-        const orderId = rows[0].order_id;
-
-        // Advance order to confirmed
-        await client.query(
-          `UPDATE orders SET status='confirmed', updated_at=NOW() WHERE id=$1`, [orderId]
-        );
-
-        // Create restaurant payout records
-        const subs = await client.query(
-          'SELECT * FROM sub_orders WHERE order_id=$1', [orderId]
-        );
-        const paymentRow = (await client.query('SELECT id FROM payments WHERE razorpay_order_id=$1', [payload.order_id])).rows[0];
-        const COMMISSION = 0.15;
-
-        for (const sub of subs.rows) {
-          const commAmt = Math.round(sub.subtotal * COMMISSION);
-          await client.query(
-            `INSERT INTO restaurant_payouts (sub_order_id, restaurant_id, payment_id, amount, commission_pct, commission_amt, net_amount)
-             VALUES ($1,$2,$3,$4,15,$5,$6)`,
-            [sub.id, sub.restaurant_id, paymentRow.id, sub.subtotal, commAmt, sub.subtotal - commAmt]
-          );
-        }
-
-        await publishOrderEvent(orderId, { event: 'payment_confirmed', orderId });
-        logger.info('Payment captured', { orderId, paymentId: payload.id });
-      });
-    }
-
-    if (event === 'payment.failed') {
-      await db.query(
-        `UPDATE payments SET status='failed', failure_reason=$1 WHERE razorpay_order_id=$2`,
-        [payload.error_description, payload.order_id]
-      );
-    }
-
-    return res.json({ status: 'ok' });
-  } catch (err) {
-    logger.error('Webhook processing error', { error: err.message });
-    return res.status(500).json({ error: 'Processing failed' });
-  }
-});
 
 module.exports = router;

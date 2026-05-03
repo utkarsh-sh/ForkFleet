@@ -8,6 +8,8 @@
  *  4. Return order + payment details to the caller
  */
 
+const rzpService = require('../payments/razorpay.service');
+
 const db = require('../db');
 const { getCart, clearCart, publishOrderEvent } = require('../db/redis');
 const logger = require('../utils/logger');
@@ -168,15 +170,15 @@ class OrderSplittingService {
     // ── Step 5: Create Razorpay order ─────────────────────────────────────────
     let razorpayOrder = null;
     try {
-      razorpayOrder = await createRazorpayOrder(order.id, grandTotalPaise);
-      await db.query(
-        `INSERT INTO payments (order_id, razorpay_order_id, amount, status)
-         VALUES ($1,$2,$3,'pending')`,
-        [order.id, razorpayOrder.id, grandTotalPaise]
-      );
+      const paymentOrder = await rzpService.createPaymentOrder(order.id, grandTotalPaise);
+      razorpayOrder = {
+        id: paymentOrder.razorpay_order_id,
+        amount: paymentOrder.amount,
+        currency: paymentOrder.currency,
+      };
     } catch (err) {
       logger.error('Razorpay order creation failed', { orderId: order.id, error: err.message });
-      // Don't fail the order — allow retry via /orders/:id/retry-payment
+      // Don't fail the order — allow retry via /api/v1/payments/retry
     }
 
     // ── Step 6: Clear cart ────────────────────────────────────────────────────
@@ -187,7 +189,7 @@ class OrderSplittingService {
       event: 'order_created',
       orderId: order.id,
       restaurantCount,
-      subOrders: subOrders.map(s => ({ id: s.id, restaurant_id: s.restaurant_id, status: s.status })),
+      subOrders: subOrders.map((s) => ({ id: s.id, restaurant_id: s.restaurant_id, status: s.status })),
     });
 
     logger.info('Order created', {
@@ -199,7 +201,6 @@ class OrderSplittingService {
 
     return { order, subOrders, razorpayOrder };
   }
-
   /**
    * Update a sub-order's status and check if all sub-orders are complete
    * to advance the parent order status.
@@ -231,7 +232,7 @@ class OrderSplittingService {
       );
 
       // Determine parent order status
-      const statuses = allSubs.map(s => s.id === subOrderId ? newStatus : s.status);
+      const statuses = allSubs.map((s) => s.status);
       let parentStatus = null;
 
       if (statuses.every(s => s === 'ready'))     parentStatus = 'ready_for_pickup';
@@ -256,25 +257,6 @@ class OrderSplittingService {
       return { subOrderId, status: newStatus, parentOrderStatus: parentStatus };
     });
   }
-}
-
-// ── Razorpay helper ───────────────────────────────────────────────────────────
-// (Separated so it can be easily mocked in tests)
-
-async function createRazorpayOrder(orderId, amountPaise) {
-  // Lazily initialise — avoids crash if RAZORPAY keys are missing in dev
-  const Razorpay = require('razorpay');
-  const razorpay = new Razorpay({
-    key_id:     process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-  });
-
-  return razorpay.orders.create({
-    amount:   amountPaise,
-    currency: 'INR',
-    receipt:  orderId,
-    notes:    { orderId },
-  });
 }
 
 module.exports = new OrderSplittingService();
