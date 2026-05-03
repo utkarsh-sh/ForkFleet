@@ -1,0 +1,21 @@
+{
+  "cleanUrls": false,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/forkfleet.html"
+    },
+    {
+      "source": "/rider",
+      "destination": "/forkfleet-rider/forkfleet-rider-v2.html"
+    },
+    {
+      "source": "/api/v1/:path*",
+      "destination": "https://YOUR_RENDER_BACKEND_URL.onrender.com/api/v1/:path*"
+    },
+    {
+      "source": "/socket.io/:path*",
+      "destination": "https://YOUR_RENDER_BACKEND_URL.onrender.com/socket.io/:path*"
+    }
+  ]
+}
