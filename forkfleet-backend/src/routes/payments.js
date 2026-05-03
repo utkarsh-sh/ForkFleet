@@ -8,6 +8,20 @@ const { authenticate, authorize } = require('../middleware/auth');
 const { validate } = require('../middleware/errorHandler');
 const logger = require('../utils/logger');
 
+function mapPaymentError(err) {
+  const msg = String(err?.message || 'Internal server error');
+  if (msg.includes('RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be set in .env')) {
+    return 'Razorpay is not configured on server. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in backend .env and restart backend.';
+  }
+  if (/authentication failed/i.test(msg) || /invalid key/i.test(msg)) {
+    return 'Razorpay authentication failed. Verify test key id/secret in backend .env.';
+  }
+  if (/ECONNREFUSED|ENOTFOUND|ETIMEDOUT/i.test(msg)) {
+    return 'Payment gateway network error. Check internet and retry.';
+  }
+  return msg;
+}
+
 router.use('/webhook', webhook);
 
 router.post(
@@ -44,7 +58,7 @@ router.post(
       });
     } catch (err) {
       logger.error('Payment initiate error', { error: err.message, orderId: order_id });
-      return serverError(res);
+      return serverError(res, mapPaymentError(err));
     }
   }
 );
@@ -112,7 +126,8 @@ router.post(
       const paymentOrder = await rzpService.createPaymentOrder(order_id, order.grand_total, user);
       return ok(res, { ...paymentOrder, retry: true });
     } catch (err) {
-      return serverError(res);
+      logger.error('Payment retry error', { error: err.message, orderId: order_id });
+      return serverError(res, mapPaymentError(err));
     }
   }
 );

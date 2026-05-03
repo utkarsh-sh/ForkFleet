@@ -363,7 +363,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 </div>
 
 <script>
-const SOCKET_BASE = location.hostname === 'localhost' ? 'http://localhost:4000' : location.origin;
+const IS_FILE_RUNTIME = location.protocol === 'file:';
+const SOCKET_BASE = (location.hostname === 'localhost' || IS_FILE_RUNTIME)
+  ? 'http://localhost:4000'
+  : location.origin;
 (function loadSocketClient() {
   const script = document.createElement('script');
   script.src = `${SOCKET_BASE}/socket.io/socket.io.js`;
@@ -433,6 +436,7 @@ let cart = {}; // { itemId: { ...item, restaurantId, qty } }
 let expanded = {1:true,2:true};
 let activeFilter = 'all';
 const API_BASE = location.hostname === 'localhost'
+  || IS_FILE_RUNTIME
   ? 'http://localhost:4000/api/v1'
   : `${location.origin}/api/v1`;
 

@@ -72,7 +72,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 <script>
 // ─── Config ─────────────────────────────────────────────────────────────────
 // In production these come from your backend / URL params / app state
-const API_BASE   = location.hostname === 'localhost' ? 'http://localhost:4000/api/v1' : `${location.origin}/api/v1`;
+const IS_FILE_RUNTIME = location.protocol === 'file:';
+const API_BASE   = (location.hostname === 'localhost' || IS_FILE_RUNTIME) ? 'http://localhost:4000/api/v1' : `${location.origin}/api/v1`;
 const ORDER_ID   = new URLSearchParams(location.search).get('order_id') || localStorage.getItem('ff_current_order_id') || '';
 const AUTH_TOKEN = localStorage.getItem('ff_access_token') || '';
 
@@ -152,19 +153,33 @@ async function startCheckout() {
   document.getElementById('payBtn').disabled = true;
 
   try {
+    if (typeof window.Razorpay !== 'function') {
+      throw new Error('Razorpay SDK did not load. Check your internet connection and retry.');
+    }
+
     // Step 1: Get Razorpay order from backend
     rzpOrderData = await initiatePayment();
 
     // Step 2: Open Razorpay modal
     openRazorpay(rzpOrderData);
   } catch (err) {
-    setStatus('error', 'Could not connect to payment gateway. Please try again.');
+    setStatus('error', err.message || 'Could not connect to payment gateway. Please try again.');
     document.getElementById('payBtn').disabled = false;
     console.error('Checkout error:', err);
   }
 }
 
 async function initiatePayment() {
+  const parseResponse = async (res) => {
+    let data = null;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
+    return data;
+  };
+
   const res = await fetch(`${API_BASE}/payments/initiate`, {
     method: 'POST',
     headers: {
@@ -173,9 +188,27 @@ async function initiatePayment() {
     },
     body: JSON.stringify({ order_id: ORDER_ID }),
   });
-  const data = await res.json();
-  if (!data.success) throw new Error(data.message);
-  return data.data;
+  const data = await parseResponse(res);
+
+  if (res.ok && data?.success) return data.data;
+
+  const msg = data?.message || data?.error || `Payment initiate failed (${res.status})`;
+  const shouldRetry = /payment_failed|status:\s*payment_failed/i.test(msg);
+  if (!shouldRetry) throw new Error(msg);
+
+  const retryRes = await fetch(`${API_BASE}/payments/retry`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify({ order_id: ORDER_ID }),
+  });
+  const retryData = await parseResponse(retryRes);
+  if (!retryRes.ok || !retryData?.success) {
+    throw new Error(retryData?.message || retryData?.error || `Payment retry failed (${retryRes.status})`);
+  }
+  return retryData.data;
 }
 
 function openRazorpay(data) {
