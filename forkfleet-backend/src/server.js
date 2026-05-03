@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
+const fs = require('fs');
 const { createServer } = require('http');
 const { setupWebSocket } = require('./websocket');
 
@@ -11,9 +13,22 @@ const app = express();
 const httpServer = createServer(app);
 
 
-app.use(helmet());
-app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
+app.use(helmet({ contentSecurityPolicy: false }));
+const allowedOrigin = process.env.CORS_ORIGIN || process.env.CLIENT_ORIGIN || '*';
+app.use(cors({ origin: allowedOrigin }));
 app.use(morgan('dev'));
+
+const projectRoot = path.resolve(__dirname, '..', '..');
+const mainAppFile = path.join(projectRoot, 'forkfleet.html');
+const riderAppFile = path.join(projectRoot, 'forkfleet-rider', 'forkfleet-rider-v2.html');
+if (fs.existsSync(mainAppFile)) {
+  app.use(express.static(projectRoot));
+  app.get('/', (req, res) => res.sendFile(mainAppFile));
+  if (fs.existsSync(riderAppFile)) {
+    app.get('/forkfleet-rider-v2.html', (req, res) => res.sendFile(riderAppFile));
+    app.get('/rider', (req, res) => res.sendFile(riderAppFile));
+  }
+}
 
 
 app.use('/api/v1/payments/webhook', express.raw({ type: 'application/json' }));
@@ -62,6 +77,8 @@ if (process.env.NODE_ENV !== 'test') {
   const PORT = process.env.PORT || 4000;
   httpServer.listen(PORT, () => {
     console.log(`🚀 ForkFleet API running on http://localhost:${PORT}`);
+    if (fs.existsSync(mainAppFile)) console.log(`🌐 ForkFleet app: http://localhost:${PORT}/forkfleet.html`);
+    if (fs.existsSync(riderAppFile)) console.log(`🛵 ForkFleet rider app: http://localhost:${PORT}/forkfleet-rider-v2.html`);
     console.log(`📡 WebSocket ready`);
     console.log(`💳 Payment webhook: /api/v1/payments/webhook`);
     console.log(`🛵 Rider routes: /api/v1/riders`);

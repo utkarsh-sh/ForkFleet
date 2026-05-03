@@ -4,85 +4,104 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ForkFleet — Order from anywhere</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg: #0d0d0d;
-  --bg2: #141414;
-  --bg3: #1c1c1c;
-  --bg4: #242424;
+  --bg: #090a0f;
+  --bg2: #11131a;
+  --bg3: #171a24;
+  --bg4: #222636;
   --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.14);
-  --text: #f0ede8;
-  --text2: #9a9690;
-  --text3: #5c5a57;
-  --accent: #e8522a;
-  --accent2: #f27043;
-  --accent-soft: rgba(232,82,42,0.12);
+  --border2: rgba(255,255,255,0.2);
+  --text: #f4f6fb;
+  --text2: #b0b5c4;
+  --text3: #767f94;
+  --accent: #ff6a3d;
+  --accent2: #ff935c;
+  --accent-soft: rgba(255,106,61,0.14);
   --green: #3d9e5f;
   --green-soft: rgba(61,158,95,0.12);
   --amber: #c98a2a;
   --amber-soft: rgba(201,138,42,0.12);
   --blue: #3a7fd4;
   --blue-soft: rgba(58,127,212,0.12);
-  --radius: 12px;
+  --radius: 14px;
   --radius-sm: 8px;
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --shadow-soft: 0 16px 36px rgba(4, 6, 12, 0.36);
+  --shadow-strong: 0 28px 64px rgba(3, 5, 10, 0.5);
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(1200px 620px at 12% -10%, rgba(255,106,61,0.14), transparent 55%),
+    radial-gradient(900px 540px at 100% 0%, rgba(58,127,212,0.16), transparent 58%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden
+}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
 
 /* ── NAV ── */
-nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,12,19,0.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:0 26px;height:66px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .logo{font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--text);cursor:pointer}
 .logo span{color:var(--accent)}
 .nav-search{flex:1;max-width:420px;position:relative}
-.nav-search input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 14px 9px 38px;font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;transition:border-color 0.2s}
-.nav-search input:focus{border-color:var(--border2)}
+.nav-search input{width:100%;background:rgba(23,26,36,0.9);border:1px solid var(--border);border-radius:10px;padding:10px 14px 10px 38px;font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;transition:all 0.22s ease}
+.nav-search input:focus{border-color:rgba(255,106,61,0.45);box-shadow:0 0 0 3px rgba(255,106,61,0.12)}
 .nav-search input::placeholder{color:var(--text3)}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:0.4;width:14px;height:14px}
 .nav-right{display:flex;align-items:center;gap:10px}
-.auth-btn{background:transparent;border:1px solid var(--border2);color:var(--text);border-radius:var(--radius-sm);padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.18s}
-.auth-btn:hover{background:var(--bg4)}
+.auth-btn{background:rgba(255,255,255,0.02);border:1px solid var(--border2);color:var(--text);border-radius:10px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.18s}
+.auth-btn:hover{background:rgba(255,255,255,0.08);transform:translateY(-1px)}
 .auth-chip{display:none;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);padding:6px 10px;border-radius:20px}
 .auth-chip.show{display:flex}
 .auth-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:11px;font-weight:700;color:#fff}
 .auth-name{font-size:11px;color:var(--text2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cart-trigger{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 16px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap}
-.cart-trigger:hover{background:var(--accent2)}
+.cart-trigger{display:flex;align-items:center;gap:8px;background:linear-gradient(110deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;padding:8px 16px;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.18s;white-space:nowrap;box-shadow:0 10px 28px rgba(255,106,61,0.3)}
+.cart-trigger:hover{transform:translateY(-1px) scale(1.01);box-shadow:0 14px 30px rgba(255,106,61,0.35)}
 .cart-count{background:rgba(255,255,255,0.25);border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600}
 .multi-badge{background:var(--blue-soft);color:var(--blue);border:1px solid rgba(58,127,212,0.2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:500;display:none}
 
 /* ── LAYOUT ── */
-.app-body{display:grid;grid-template-columns:1fr 380px;gap:0;min-height:calc(100vh - 60px)}
-.main-col{border-right:1px solid var(--border);overflow-y:auto;height:calc(100vh - 60px)}
-.side-col{overflow-y:auto;height:calc(100vh - 60px);background:var(--bg2)}
+.app-body{display:grid;grid-template-columns:1fr 390px;gap:0;min-height:calc(100vh - 66px)}
+.main-col{border-right:1px solid var(--border);overflow-y:auto;height:calc(100vh - 66px)}
+.side-col{overflow-y:auto;height:calc(100vh - 66px);background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent 30%),var(--bg2)}
 
 /* ── HERO ── */
-.hero{padding:40px 28px 24px;border-bottom:1px solid var(--border)}
+.hero{position:relative;overflow:hidden;padding:48px 30px 30px;border-bottom:1px solid var(--border)}
+.hero::before{content:'';position:absolute;right:-90px;top:-70px;width:260px;height:260px;background:radial-gradient(circle,rgba(255,106,61,0.32),rgba(255,106,61,0));filter:blur(2px);pointer-events:none}
+.hero > *{position:relative;z-index:1}
 .hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.hero-title{font-family:var(--font-display);font-size:38px;font-weight:800;line-height:1.1;letter-spacing:-1px;color:var(--text)}
+.hero-title{font-family:var(--font-display);font-size:clamp(38px,5vw,52px);font-weight:800;line-height:1.04;letter-spacing:-1.2px;color:var(--text);text-wrap:balance}
 .hero-title em{color:var(--accent);font-style:normal}
-.hero-sub{margin-top:10px;color:var(--text2);font-size:14px;max-width:420px}
+.hero-sub{margin-top:12px;color:var(--text2);font-size:15px;max-width:520px}
 .hero-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-.pill{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:var(--font-body)}
-.pill:hover,.pill.active{background:var(--accent-soft);border-color:rgba(232,82,42,0.35);color:var(--accent)}
+.pill{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.18s;font-family:var(--font-body)}
+.pill:hover,.pill.active{background:var(--accent-soft);border-color:rgba(255,106,61,0.45);color:#ffd5c7;transform:translateY(-1px)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px;max-width:560px}
+.hero-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.hero-stat-k{display:block;font-family:var(--font-display);font-size:19px;line-height:1.1;color:var(--text)}
+.hero-stat-v{display:block;font-size:11px;color:var(--text3);margin-top:2px}
 
 /* ── RESTAURANT SECTION ── */
-.section{padding:24px 28px}
+.section{padding:26px 30px 30px}
 .section-label{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:16px}
 .rest-grid{display:flex;flex-direction:column;gap:16px}
 
-.rest-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color 0.2s}
-.rest-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 14px 40px rgba(0,0,0,0.35)}
+.rest-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent 28%),var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all 0.22s ease;box-shadow:var(--shadow-soft);animation:fadeUp 0.5s ease both}
+.rest-card:hover{border-color:rgba(255,255,255,0.22);transform:translateY(-2px);box-shadow:var(--shadow-strong)}
 .rest-card.has-items{border-color:rgba(232,82,42,0.3)}
 .rest-card.bump{animation:cardBump 0.45s ease}
 .rest-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer;user-select:none}
 .rest-head-left{display:flex;align-items:center;gap:12px}
-.rest-emoji{width:44px;height:44px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.rest-info-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text)}
+.rest-emoji{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08)}
+.rest-info-name{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text)}
 .rest-info-meta{font-size:12px;color:var(--text3);margin-top:1px}
 .rest-head-right{display:flex;align-items:center;gap:8px}
 .tag{font-size:10px;font-weight:600;letter-spacing:0.5px;padding:3px 8px;border-radius:20px;text-transform:uppercase}
@@ -92,8 +111,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .chevron{color:var(--text3);font-size:12px;transition:transform 0.2s}
 .chevron.open{transform:rotate(180deg)}
 
-.menu-body{border-top:1px solid var(--border);padding:0 18px 8px}
-.menu-item{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)}
+.menu-body{border-top:1px solid var(--border);padding:2px 18px 8px}
+.menu-item{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);transition:background 0.18s ease}
+.menu-item:hover{background:rgba(255,255,255,0.015)}
 .menu-item:last-child{border-bottom:none}
 .mi-left{display:flex;align-items:center;gap:10px}
 .veg-tag{width:12px;height:12px;border-radius:2px;border:1.5px solid;flex-shrink:0}
@@ -104,8 +124,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .mi-name{font-size:13px;color:var(--text);font-weight:500}
 .mi-desc{font-size:11px;color:var(--text3);margin-top:1px;max-width:240px}
 .mi-price{font-size:13px;color:var(--text2);font-weight:500;margin-right:12px}
-.add-btn{background:transparent;border:1px solid var(--border2);color:var(--text);border-radius:var(--radius-sm);padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:var(--font-body)}
-.add-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.add-btn{background:transparent;border:1px solid var(--border2);color:var(--text);border-radius:var(--radius-sm);padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.16s ease;font-family:var(--font-body)}
+.add-btn:hover{background:linear-gradient(120deg,var(--accent),var(--accent2));border-color:transparent;color:#fff;box-shadow:0 10px 20px rgba(255,106,61,0.24)}
 .qty-ctrl{display:flex;align-items:center;gap:8px}
 .qty-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all 0.15s}
 .qty-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -135,7 +155,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .cart-fee-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);padding:3px 0}
 .cart-total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:600;color:var(--text);padding:8px 0 0;font-family:var(--font-display)}
 .cart-info-box{background:var(--blue-soft);border:1px solid rgba(58,127,212,0.15);border-radius:var(--radius-sm);padding:10px 12px;margin:12px 0;font-size:11px;color:var(--blue);line-height:1.5}
-.fusion-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 12px;margin:12px 0 2px}
+.fusion-card{background:linear-gradient(180deg,rgba(58,127,212,0.08),transparent 40%),var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 12px;margin:12px 0 2px}
 .fusion-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .fusion-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2)}
 .fusion-chip{font-size:10px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:20px;border:1px solid rgba(232,82,42,0.25)}
@@ -143,8 +163,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .fusion-line strong{color:var(--text);font-weight:600}
 .fusion-rests{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .fusion-rest{font-size:11px;color:var(--text2);border:1px solid var(--border);padding:3px 7px;border-radius:20px;background:var(--bg2)}
-.checkout-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:14px;font-family:var(--font-display);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;margin-top:12px}
-.checkout-btn:hover{background:var(--accent2);transform:translateY(-1px)}
+.checkout-btn{width:100%;background:linear-gradient(112deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;padding:14px;font-family:var(--font-display);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.18s;margin-top:12px;box-shadow:0 12px 24px rgba(255,106,61,0.28)}
+.checkout-btn:hover{transform:translateY(-1px) scale(1.01);box-shadow:0 18px 30px rgba(255,106,61,0.34)}
 .checkout-btn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;transform:none}
 .checkout-btn.processing{background:linear-gradient(90deg,var(--accent),var(--accent2));background-size:200% 100%;animation:btnSheen 1.1s linear infinite}
 
@@ -155,7 +175,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .track-order-id{font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:0.5px;text-transform:uppercase}
 .track-title{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:20px}
 .track-rests{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
-.track-rest-row{background:var(--bg3);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.track-rest-row{background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent 45%),var(--bg3);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
 .track-rest-name{font-size:13px;color:var(--text)}
 .track-status-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
 .track-rest-main{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -168,7 +188,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .prep-fill.ready{background:linear-gradient(90deg,#3d9e5f,#58b77a)}
 .prep-fill.picked{background:linear-gradient(90deg,#3a7fd4,#66a2ea)}
 .prep-fill.delivered{background:linear-gradient(90deg,#2faa5f,#66d28d)}
-.delay-card{display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 12px;margin:0 0 14px}
+.delay-card{display:none;background:linear-gradient(180deg,rgba(201,138,42,0.09),transparent 50%),var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 12px;margin:0 0 14px}
 .delay-card.show{display:block}
 .delay-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
 .delay-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2)}
@@ -176,7 +196,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .delay-chip.watch{background:var(--amber-soft);color:var(--amber)}
 .delay-chip.recovered{background:var(--green-soft);color:var(--green)}
 .delay-msg{font-size:12px;color:var(--text2);line-height:1.45}
-.route-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px;margin:0 0 14px}
+.route-card{background:linear-gradient(180deg,rgba(58,127,212,0.1),transparent 52%),var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px;margin:0 0 14px}
 .route-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .route-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2)}
 .route-chip{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--blue-soft);color:var(--blue);border:1px solid rgba(58,127,212,0.2)}
@@ -204,15 +224,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .tl-label{font-size:13px;color:var(--text);font-weight:500}
 .tl-label.future{color:var(--text3)}
 .tl-sub{font-size:11px;color:var(--text3);margin-top:2px}
-.rider-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;margin:4px 0 16px}
+.rider-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent 50%),var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;margin:4px 0 16px}
 .rider-avatar{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .rider-name{font-size:14px;font-weight:600;color:var(--text)}
 .rider-eta{font-size:12px;color:var(--text3)}
-.new-order-btn{width:100%;background:transparent;border:1px solid var(--border2);color:var(--text);border-radius:var(--radius-sm);padding:12px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;margin-top:8px}
-.new-order-btn:hover{background:var(--bg4)}
+.new-order-btn{width:100%;background:transparent;border:1px solid var(--border2);color:var(--text);border-radius:10px;padding:12px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.16s;margin-top:8px}
+.new-order-btn:hover{background:rgba(255,255,255,0.08);transform:translateY(-1px)}
 
 /* ── SUCCESS TOAST ── */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:14px 20px;font-size:13px;color:var(--text);z-index:999;display:flex;align-items:center;gap:10px;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(23,26,36,0.96);border:1px solid var(--border2);border-radius:var(--radius);padding:14px 20px;font-size:13px;color:var(--text);z-index:999;display:flex;align-items:center;gap:10px;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;box-shadow:var(--shadow-strong)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
 .float-bubble{position:fixed;z-index:998;pointer-events:none;font-size:12px;font-weight:700;color:#fff;padding:4px 8px;background:rgba(232,82,42,0.95);border-radius:20px;animation:bubbleRise 0.9s ease forwards;box-shadow:0 8px 24px rgba(0,0,0,0.35)}
@@ -224,7 +244,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 
 .login-modal{position:fixed;inset:0;background:rgba(5,5,5,0.68);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1300;padding:20px}
 .login-modal.show{display:flex}
-.login-card{width:100%;max-width:380px;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:18px;box-shadow:0 28px 70px rgba(0,0,0,0.55)}
+.login-card{width:100%;max-width:390px;background:linear-gradient(180deg,rgba(255,255,255,0.04),transparent 52%),var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:18px;box-shadow:0 30px 72px rgba(0,0,0,0.58)}
 .login-title{font-family:var(--font-display);font-size:23px;font-weight:800;letter-spacing:-0.4px}
 .login-sub{font-size:12px;color:var(--text3);margin:4px 0 12px}
 .login-field{margin-bottom:10px}
@@ -243,8 +263,24 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 @keyframes btnSheen{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 @keyframes confettiFall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(640deg);opacity:0}}
 @keyframes bannerPop{0%{opacity:0;transform:translateX(-50%) translateY(-20px)}18%{opacity:1;transform:translateX(-50%) translateY(0)}82%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-12px)}}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+
+.hero,.section-label,.cart-panel,.tracking-panel{animation:fadeUp 0.5s ease both}
+.rest-card:nth-child(2){animation-delay:0.05s}
+.rest-card:nth-child(3){animation-delay:0.1s}
+.rest-card:nth-child(4){animation-delay:0.15s}
+.rest-card:nth-child(5){animation-delay:0.2s}
 
 @media(max-width:768px){
+  nav{height:62px;padding:0 14px;gap:10px}
+  .logo{font-size:19px}
+  .nav-right{gap:6px}
+  .auth-btn{padding:7px 10px}
+  .multi-badge{display:none !important}
+  .hero{padding:34px 18px 24px}
+  .hero-sub{font-size:14px}
+  .hero-stats{grid-template-columns:1fr;max-width:100%}
+  .section{padding:20px 18px 24px}
   .app-body{grid-template-columns:1fr}
   .side-col{height:auto;position:fixed;bottom:0;left:0;right:0;height:auto;max-height:80vh;overflow-y:auto;z-index:50;transform:translateY(100%);transition:transform 0.3s ease;border-radius:var(--radius) var(--radius) 0 0;border-top:1px solid var(--border2)}
   .side-col.open{transform:translateY(0)}
@@ -280,6 +316,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
       <div class="hero-eyebrow">New in Delhi</div>
       <h1 class="hero-title">One order.<br/><em>Any restaurant.</em></h1>
       <p class="hero-sub">Mix dishes from different restaurants — biryani from one, pizza from another — all in a single checkout.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="hero-stat-k">25–35 min</span><span class="hero-stat-v">Average city delivery</span></div>
+        <div class="hero-stat"><span class="hero-stat-k">4.8★</span><span class="hero-stat-v">Top-rated kitchen partners</span></div>
+        <div class="hero-stat"><span class="hero-stat-k">1 checkout</span><span class="hero-stat-v">Multi-restaurant unified order</span></div>
+      </div>
       <div class="hero-pills">
         <button class="pill active" onclick="filterCuisine('all',this)">All restaurants</button>
         <button class="pill" onclick="filterCuisine('north-indian',this)">North Indian</button>
@@ -364,9 +405,28 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 
 <script>
 const IS_FILE_RUNTIME = location.protocol === 'file:';
-const SOCKET_BASE = (location.hostname === 'localhost' || IS_FILE_RUNTIME)
-  ? 'http://localhost:4000'
-  : location.origin;
+const isLocalLikeHost = (host) => {
+  if (!host) return false;
+  if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return true;
+  if (/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host)) return true;
+  if (/^192\.168\.\d{1,3}\.\d{1,3}$/.test(host)) return true;
+  return /^172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}$/.test(host);
+};
+const normalizeOrigin = (value) => {
+  try {
+    const parsed = new URL(String(value || ''));
+    if (!parsed.hostname) return '';
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return '';
+  }
+};
+const IS_LOCAL_RUNTIME = IS_FILE_RUNTIME || isLocalLikeHost(location.hostname);
+const storedApiOrigin = normalizeOrigin(localStorage.getItem('ff_api_origin'));
+const hostBasedOrigin = location.hostname ? `http://${location.hostname}:4000` : '';
+const defaultLocalOrigin = IS_FILE_RUNTIME ? 'http://localhost:4000' : (hostBasedOrigin || 'http://localhost:4000');
+const LOCAL_BACKEND_ORIGIN = storedApiOrigin || defaultLocalOrigin;
+const SOCKET_BASE = IS_LOCAL_RUNTIME ? LOCAL_BACKEND_ORIGIN : location.origin;
 (function loadSocketClient() {
   const script = document.createElement('script');
   script.src = `${SOCKET_BASE}/socket.io/socket.io.js`;
@@ -435,16 +495,77 @@ const DATA = [
 let cart = {}; // { itemId: { ...item, restaurantId, qty } }
 let expanded = {1:true,2:true};
 let activeFilter = 'all';
-const API_BASE = location.hostname === 'localhost'
-  || IS_FILE_RUNTIME
-  ? 'http://localhost:4000/api/v1'
-  : `${location.origin}/api/v1`;
+const API_BASE_CANDIDATES = IS_LOCAL_RUNTIME
+  ? [
+      LOCAL_BACKEND_ORIGIN,
+      hostBasedOrigin,
+      'http://localhost:4000',
+      'http://127.0.0.1:4000',
+    ]
+      .map(normalizeOrigin)
+      .filter(Boolean)
+      .filter((v, i, arr) => arr.indexOf(v) === i)
+      .map((origin) => `${origin}/api/v1`)
+  : [`${location.origin}/api/v1`];
+let API_BASE = API_BASE_CANDIDATES[0] || `${location.origin}/api/v1`;
+
+function rememberApiBase(base) {
+  API_BASE = base;
+  if (!IS_LOCAL_RUNTIME) return;
+  const origin = normalizeOrigin(String(base).replace(/\/api\/v1\/?$/, ''));
+  if (origin) localStorage.setItem('ff_api_origin', origin);
+}
+
+async function apiFetch(path, options = {}) {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const attempts = [API_BASE].concat(API_BASE_CANDIDATES.filter((b) => b !== API_BASE));
+  let lastError = null;
+
+  for (const base of attempts) {
+    try {
+      const response = await fetch(`${base}${normalizedPath}`, options);
+      rememberApiBase(base);
+      return response;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('Network request failed.');
+}
 
 function getRestaurantById(id) { return DATA.find(r => r.id === id); }
 function cartItems() { return Object.values(cart); }
 function totalQty() { return cartItems().reduce((s,i) => s + i.qty, 0); }
 function subtotal() { return cartItems().reduce((s,i) => s + i.price * i.qty, 0); }
 function restaurantsInCart() { return [...new Set(cartItems().map(i => i.restaurantId))]; }
+function normalizeName(value) { return String(value || '').trim().toLowerCase(); }
+
+function ensureRestaurantByName(name, fallbackIndex = 0) {
+  const normal = normalizeName(name);
+  let found = DATA.find((r) => normalizeName(r.name) === normal);
+  if (found) return found;
+
+  const fallbackId = 9000 + fallbackIndex;
+  const latBase = 28.61 + (fallbackIndex * 0.0015);
+  const lngBase = 77.21 + (fallbackIndex * 0.0015);
+  found = {
+    id: fallbackId,
+    name: name || `Kitchen ${fallbackIndex + 1}`,
+    emoji: '🍽️',
+    bg: '#1a1a1a',
+    tag: 'Partner',
+    tagClass: 'tag-blue',
+    rating: '4.6',
+    time: '25–35 min',
+    cuisine: 'partner',
+    itemCount: 0,
+    location: { lat: latBase, lng: lngBase },
+    items: [],
+  };
+  DATA.push(found);
+  return found;
+}
 
 function getStoredUser() {
   try {
@@ -501,7 +622,7 @@ async function doCustomerLogin() {
   submitBtn.textContent = 'Signing in...';
 
   try {
-    const res = await fetch(`${API_BASE}/auth/login`, {
+    const res = await apiFetch('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone, password }),
@@ -534,6 +655,92 @@ function logoutCustomer() {
   localStorage.removeItem('ff_user');
   refreshAuthUI();
   showToast('Logged out successfully.');
+}
+
+function activateTrackingUI(labelOrderId) {
+  document.getElementById('cartPanel').classList.add('hidden');
+  const tp = document.getElementById('trackingPanel');
+  tp.classList.add('active');
+  document.getElementById('trackOrderId').textContent = 'Order ' + labelOrderId;
+}
+
+function runTrackingSimulation() {
+  if (trackInterval) clearInterval(trackInterval);
+  trackInterval = setInterval(() => {
+    currentStep++;
+    Object.keys(prepProgress).forEach((rid) => {
+      const status = restStatuses[rid];
+      const bump = status === 'preparing' ? 16 : status === 'ready' ? 18 : status === 'picked' ? 20 : 8;
+      prepProgress[rid] = Math.min(100, prepProgress[rid] + bump);
+    });
+    if (currentStep === 2) { Object.keys(restStatuses).forEach(k => restStatuses[k] = 'ready'); }
+    if (currentStep === 3) { Object.keys(restStatuses).forEach(k => restStatuses[k] = 'picked'); document.getElementById('riderCard').style.display = 'flex'; }
+    if (currentStep === 5) { Object.keys(restStatuses).forEach(k => restStatuses[k] = 'delivered'); clearInterval(trackInterval); }
+    renderTracking();
+  }, 3000);
+}
+
+async function startTrackingFromOrder(orderIdToTrack, orderData, opts = {}) {
+  if (!orderData) return;
+  orderId = orderIdToTrack;
+  currentStep = 0;
+  liveRouteProgress = 6;
+  liveRiderGps = null;
+  restStatuses = {};
+  prepProgress = {};
+
+  const subOrders = Array.isArray(orderData.sub_orders) ? orderData.sub_orders : [];
+  const restIds = subOrders.map((sub, idx) => {
+    const rest = ensureRestaurantByName(sub.restaurant_name, idx);
+    let status = 'preparing';
+    if (sub.status === 'ready') status = 'ready';
+    if (sub.status === 'picked_up') status = 'picked';
+    if (sub.status === 'delivered') status = 'delivered';
+    restStatuses[rest.id] = status;
+    prepProgress[rest.id] = status === 'delivered' ? 100 : status === 'picked' ? 85 : status === 'ready' ? 65 : 20;
+    return rest.id;
+  });
+
+  routeGeoPoints = restIds
+    .map((rid) => getRestaurantById(+rid))
+    .filter((r) => r && r.location)
+    .map((r) => ({ label: r.name.split(' ')[0], icon: r.emoji, lat: r.location.lat, lng: r.location.lng }));
+  routeGeoPoints.push({ label: 'You', icon: '🏠', lat: customerHome.lat, lng: customerHome.lng });
+
+  activateTrackingUI(orderIdToTrack);
+  renderTracking();
+  showToast(opts.demo ? 'Payment skipped (demo). Tracking started.' : 'Order confirmed. Tracking started.');
+
+  const liveStarted = startLiveTracking(orderIdToTrack);
+  if (liveStarted) {
+    showToast('Live rider tracking connected.');
+    return;
+  }
+  runTrackingSimulation();
+}
+
+async function bootTrackingFromUrl() {
+  const params = new URLSearchParams(location.search);
+  const urlOrderId = params.get('order_id');
+  if (!urlOrderId) return;
+
+  const token = localStorage.getItem('ff_access_token');
+  if (!token) return;
+
+  const demoSkip = params.get('demo_skip') === '1' || localStorage.getItem('ff_demo_skip_payment') === '1';
+
+  try {
+    const res = await apiFetch(`/orders/${urlOrderId}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (!res.ok || !data?.success || !data?.data?.order) return;
+
+    await startTrackingFromOrder(urlOrderId, data.data.order, { demo: demoSkip });
+    if (demoSkip) localStorage.removeItem('ff_demo_skip_payment');
+  } catch {
+    // ignore auto-tracking if fetch fails
+  }
 }
 
 function burstAddAnimation(anchorEl, text = '+1') {
@@ -825,7 +1032,7 @@ async function syncLocalCartToBackend(accessToken) {
     'Authorization': `Bearer ${accessToken}`,
   };
 
-  const cartResetRes = await fetch(`${API_BASE}/cart`, {
+  const cartResetRes = await apiFetch('/cart', {
     method: 'DELETE',
     headers: authHeaders,
   });
@@ -834,7 +1041,7 @@ async function syncLocalCartToBackend(accessToken) {
     throw new Error(cartResetData.message || cartResetData.error || 'Failed to reset server cart.');
   }
 
-  const restRes = await fetch(`${API_BASE}/restaurants?city=Delhi&limit=50`);
+  const restRes = await apiFetch('/restaurants?city=Delhi&limit=50');
   const restData = await restRes.json();
   if (!restRes.ok || !restData.success || !Array.isArray(restData.data?.restaurants)) {
     throw new Error(restData.message || restData.error || 'Failed to load restaurants from backend.');
@@ -856,7 +1063,7 @@ async function syncLocalCartToBackend(accessToken) {
     }
 
     if (!menuCache[backendRestaurant.id]) {
-      const menuRes = await fetch(`${API_BASE}/restaurants/${backendRestaurant.id}/menu`);
+      const menuRes = await apiFetch(`/restaurants/${backendRestaurant.id}/menu`);
       const menuData = await menuRes.json();
       if (!menuRes.ok || !menuData.success || !Array.isArray(menuData.data?.menu)) {
         throw new Error(`Failed to load menu for ${backendRestaurant.name}.`);
@@ -876,7 +1083,7 @@ async function syncLocalCartToBackend(accessToken) {
       throw new Error(`Item "${item.name}" not found in backend menu for ${backendRestaurant.name}.`);
     }
 
-    const addRes = await fetch(`${API_BASE}/cart/items`, {
+    const addRes = await apiFetch('/cart/items', {
       method: 'POST',
       headers: authHeaders,
       body: JSON.stringify({
@@ -907,7 +1114,7 @@ async function placeOrder() {
 
     await syncLocalCartToBackend(token);
 
-    const createRes = await fetch(`${API_BASE}/orders`, {
+    const createRes = await apiFetch('/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -930,7 +1137,10 @@ async function placeOrder() {
     playOrderSuccessAnimation();
     window.location.href = `forkfleet-payments/checkout.html?order_id=${encodeURIComponent(createdOrderId)}`;
   } catch (err) {
-    const message = err?.message || 'Could not place your order right now.';
+    let message = err?.message || 'Could not place your order right now.';
+    if (/failed to fetch|networkerror/i.test(message)) {
+      message = `Could not reach ForkFleet backend on port 4000. Tried: ${API_BASE_CANDIDATES.map((b) => b.replace(/\/api\/v1$/, '')).join(', ')}`;
+    }
     showToast(message);
     alert(message);
     checkoutBtn.disabled = false;
@@ -1254,6 +1464,7 @@ function showToast(msg) {
 // Init
 renderAll();
 refreshAuthUI();
+bootTrackingFromUrl();
 // Pre-expand first two restaurants
 expanded = {1:true, 2:true, 3:false, 4:false, 5:false};
 renderRestaurants();
