@@ -72,13 +72,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 <script>
 // ─── Config ─────────────────────────────────────────────────────────────────
 // In production these come from your backend / URL params / app state
-<<<<<<< HEAD
-const API_BASE   = location.hostname === 'localhost' ? 'http://localhost:4000/api/v1' : `${location.origin}/api/v1`;
-const ORDER_ID   = new URLSearchParams(location.search).get('order_id') || localStorage.getItem('ff_current_order_id') || '';
-=======
 const API_BASE   = 'http://localhost:4000/api/v1';
 const ORDER_ID   = new URLSearchParams(location.search).get('order_id') || 'demo-order-id';
->>>>>>> f208b0dcb681f0b0599bd21ef27022be7464679e
 const AUTH_TOKEN = localStorage.getItem('ff_access_token') || '';
 
 // ─── State ───────────────────────────────────────────────────────────────────
@@ -87,52 +82,6 @@ let orderSummary  = null;   // from GET /orders/:id
 
 // ─── Initialise ──────────────────────────────────────────────────────────────
 async function init() {
-<<<<<<< HEAD
-  if (!ORDER_ID) {
-    setStatus('error', 'Missing order_id. Open checkout with ?order_id=<your-order-id>');
-    document.getElementById('payBtn').disabled = true;
-    return;
-  }
-
-  if (!AUTH_TOKEN) {
-    setStatus('error', 'Missing login token. Please login in ForkFleet and retry.');
-    document.getElementById('payBtn').disabled = true;
-    return;
-  }
-
-  setStatus('loading', 'Loading your order details...');
-
-  try {
-    const res = await fetch(`${API_BASE}/orders/${ORDER_ID}`, {
-      headers: {
-        'Authorization': `Bearer ${AUTH_TOKEN}`,
-      },
-    });
-    const payload = await res.json();
-    const order = payload?.data?.order;
-
-    if (!res.ok || !payload.success || !order) {
-      throw new Error(payload.message || payload.error || 'Could not load order.');
-    }
-
-    const subOrders = Array.isArray(order.sub_orders) ? order.sub_orders : [];
-    orderSummary = {
-      restaurants: subOrders.map((sub) => ({
-        name: sub.restaurant_name || 'Restaurant',
-        subtotal: Number(sub.subtotal || 0),
-      })),
-      delivery_fee: Number(order.delivery_fee || 0),
-      tax_amount: Number(order.tax_amount || 0),
-      grand_total: Number(order.grand_total || 0),
-    };
-
-    renderSummary(orderSummary);
-    setStatus('', '');
-  } catch (err) {
-    setStatus('error', `Failed to load order: ${err.message}`);
-    document.getElementById('payBtn').disabled = true;
-  }
-=======
   // Demo data when running standalone (replace with real API calls in production)
   orderSummary = {
     restaurants: [
@@ -144,7 +93,6 @@ async function init() {
     grand_total:  96500,  // paise
   };
   renderSummary(orderSummary);
->>>>>>> f208b0dcb681f0b0599bd21ef27022be7464679e
 }
 
 function renderSummary(summary) {
@@ -219,11 +167,7 @@ function openRazorpay(data) {
 
         // Redirect to order tracking after 2s
         setTimeout(() => {
-<<<<<<< HEAD
-          window.location.href = `../forkfleet.html?order_id=${encodeURIComponent(ORDER_ID)}`;
-=======
           window.location.href = `/track?order_id=${ORDER_ID}`;
->>>>>>> f208b0dcb681f0b0599bd21ef27022be7464679e
         }, 2000);
       } catch (err) {
         setStatus('error', `Payment verification failed: ${err.message}. Please contact support if amount was deducted.`);
@@ -247,8 +191,6 @@ function openRazorpay(data) {
     const err = response.error;
     setStatus('error', `Payment failed: ${err.description} (${err.code}). Please try a different payment method.`);
     document.getElementById('payBtn').disabled = false;
-<<<<<<< HEAD
-=======
 
     // Notify backend of failure
     fetch(`${API_BASE}/payments/webhook`, {
@@ -256,7 +198,6 @@ function openRazorpay(data) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ event: 'payment.failed', data: err }),
     }).catch(() => {});
->>>>>>> f208b0dcb681f0b0599bd21ef27022be7464679e
   });
 
   rzp.open();
