@@ -7,9 +7,9 @@
  */
 
 const request = require('supertest');
-const { app } = require('../src/server');
-const db = require('../src/db');
-const { redis } = require('../src/db/redis');
+const { app } = require('../server');
+const db = require('../db');
+const { redis } = require('../db/redis');
 
 // ── Test state shared across tests ────────────────────────────────────────────
 let accessToken = '';
@@ -33,7 +33,7 @@ afterAll(async () => {
     await db.query('DELETE FROM users WHERE id = $1', [userId]);
   }
   await redis.quit();
-  const { pool } = require('../src/db');
+  const { pool } = require('../db');
   await pool.end();
 });
 

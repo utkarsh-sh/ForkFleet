@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ForkFleet Kitchen — Restaurant Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f7f4ef;--bg2:#eeebe4;--bg3:#e5e0d7;
+  --surface:#ffffff;--surface2:#faf8f4;
+  --border:rgba(30,25,15,0.09);--border2:rgba(30,25,15,0.16);
+  --ink:#1a1610;--ink2:#4d4840;--ink3:#8a8278;--ink4:#bdb8b0;
+  --orange:#e05520;--orange2:#f07040;--orange3:#fde9e2;
+  --green:#1d7a47;--green2:#e5f4ec;
+  --amber:#a06010;--amber2:#fff2d8;
+  --blue:#1550a0;--blue2:#e6eefa;
+  --red:#b83030;--red2:#fde8e8;
+  --r:12px;--r-sm:8px;--r-xs:5px;
+  --font-d:'Fraunces',serif;--font-b:'DM Sans',sans-serif;--font-m:'DM Mono',monospace;
+  --nav-w:230px;--hdr-h:58px;
+  --shadow:0 1px 12px rgba(30,25,15,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:14px;line-height:1.5}
+button{font-family:var(--font-b);cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:var(--font-b)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
+
+/* ── LOGIN SCREEN ────────────────────────────── */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:40px 36px;width:100%;max-width:400px;box-shadow:var(--shadow)}
+.login-logo{font-family:var(--font-d);font-size:28px;font-weight:700;margin-bottom:4px}
+.login-logo span{color:var(--orange)}
+.login-logo sub{font-size:13px;font-weight:400;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;margin-left:6px}
+.login-sub{font-size:14px;color:var(--ink3);margin-bottom:28px}
+.form-row{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.form-label{font-size:12px;font-weight:500;color:var(--ink2)}
+.form-input{background:var(--bg);border:1.5px solid transparent;border-radius:var(--r-sm);padding:10px 13px;font-size:14px;color:var(--ink);outline:none;transition:all 0.15s}
+.form-input:focus{border-color:var(--orange);background:var(--surface)}
+.form-input::placeholder{color:var(--ink4)}
+.login-btn{width:100%;background:var(--orange);color:#fff;border-radius:var(--r-sm);padding:13px;font-size:14px;font-weight:500;transition:all 0.15s;margin-top:6px}
+.login-btn:hover{background:var(--orange2)}
+.login-demo{font-size:12px;color:var(--ink3);text-align:center;margin-top:14px;background:var(--bg);border-radius:var(--r-xs);padding:10px;line-height:1.6}
+.login-demo strong{color:var(--ink);font-family:var(--font-m)}
+.login-error{background:var(--red2);color:var(--red);border-radius:var(--r-xs);padding:8px 12px;font-size:13px;display:none;margin-bottom:10px}
+
+/* ── SHELL ───────────────────────────────────── */
+#appShell{display:none}
+.shell{display:grid;grid-template-columns:var(--nav-w) 1fr;grid-template-rows:var(--hdr-h) 1fr;min-height:100vh}
+
+/* ── HEADER ──────────────────────────────────── */
+header{grid-column:1/-1;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;gap:16px;position:sticky;top:0;z-index:100}
+.hdr-logo{font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--ink)}
+.hdr-logo span{color:var(--orange)}
+.hdr-logo sub{font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-left:5px}
+.hdr-status{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:6px 14px}
+.hdr-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.hdr-dot.on{background:var(--green);animation:blink 2s infinite}
+.hdr-dot.off{background:var(--ink4)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.hdr-status-label{font-size:13px;color:var(--ink2);font-weight:500}
+.status-toggle-btn{font-size:12px;font-weight:500;color:var(--orange);padding:0;transition:color 0.15s}
+.status-toggle-btn:hover{color:var(--orange2)}
+.hdr-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.hdr-rest-name{font-size:13px;font-weight:500;color:var(--ink2)}
+.hdr-notif{width:32px;height:32px;border-radius:var(--r-xs);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:14px;position:relative;cursor:pointer}
+.hdr-notif-badge{position:absolute;top:-4px;right:-4px;background:var(--orange);color:#fff;font-size:9px;font-weight:700;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-m)}
+.hdr-user{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all 0.15s}
+.hdr-user:hover{border-color:var(--orange)}
+.hdr-avatar{width:24px;height:24px;border-radius:50%;background:var(--orange3);color:var(--orange);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.hdr-user-name{font-size:12px;font-weight:500;color:var(--ink2)}
+
+/* ── NAV ─────────────────────────────────────── */
+nav{background:var(--surface);border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-sect{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);padding:10px 10px 4px;margin-top:6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r-sm);color:var(--ink3);font-size:13px;font-weight:500;transition:all 0.12s;width:100%;text-align:left}
+.nav-item:hover{background:var(--bg);color:var(--ink)}
+.nav-item.active{background:var(--orange3);color:var(--orange);font-weight:600}
+.nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;font-family:var(--font-m)}
+.nav-badge.g{background:var(--green)}
+.nav-badge.a{background:var(--amber)}
+.nav-divider{border:none;border-top:1px solid var(--border);margin:6px 0}
+.nav-rest-info{padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);margin-bottom:8px}
+.nri-name{font-family:var(--font-d);font-size:14px;font-weight:600;color:var(--ink);line-height:1.2}
+.nri-loc{font-size:11px;color:var(--ink3);margin-top:3px;display:flex;align-items:center;gap:4px}
+
+/* ── MAIN ────────────────────────────────────── */
+main{overflow-y:auto;padding:24px;background:var(--bg)}
+.page{display:none;flex-direction:column;gap:18px;animation:fadeUp 0.2s ease}
+.page.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.pg-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pg-title{font-family:var(--font-d);font-size:22px;font-weight:700;letter-spacing:-0.5px}
+.pg-sub{font-size:13px;color:var(--ink3);margin-top:2px}
+
+/* ── STAT CARDS ──────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.stat-lbl{font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink3)}
+.stat-icon{font-size:18px;opacity:0.2}
+.stat-val{font-family:var(--font-d);font-size:30px;font-weight:700;letter-spacing:-1px;color:var(--ink);line-height:1}
+.stat-delta{font-size:12px;color:var(--green);margin-top:4px}
+.stat-delta.neg{color:var(--red)}
+.stat-accent{position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--r) var(--r)}
+
+/* ── CARDS ───────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
+.card-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:var(--r-sm);font-size:13px;font-weight:500;transition:all 0.12s;border:1px solid transparent;white-space:nowrap}
+.btn-primary{background:var(--orange);color:#fff;border-color:var(--orange)}
+.btn-primary:hover{background:var(--orange2)}
+.btn-ghost{background:transparent;border-color:var(--border2);color:var(--ink2)}
+.btn-ghost:hover{background:var(--bg);color:var(--ink)}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* ── ORDER KANBAN ────────────────────────────── */
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.col-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px}
+.col-title{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink3)}
+.col-count{font-family:var(--font-m);font-size:11px;background:var(--bg2);color:var(--ink3);padding:2px 7px;border-radius:10px}
+.order-cards{display:flex;flex-direction:column;gap:10px;min-height:60px}
+.ocard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;transition:all 0.15s}
+.ocard.pulse{border-color:rgba(224,85,32,0.4);box-shadow:0 0 0 3px rgba(224,85,32,0.07);animation:glow 2s infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 3px rgba(224,85,32,0.07)}50%{box-shadow:0 0 0 6px rgba(224,85,32,0.12)}}
+.ocard.done{border-color:rgba(29,122,71,0.3)}
+.oc-id{font-family:var(--font-m);font-size:11px;color:var(--ink3);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.oc-multi{background:var(--blue2);color:var(--blue);font-size:10px;font-weight:600;padding:1px 6px;border-radius:6px}
+.oc-items{font-size:13px;color:var(--ink);line-height:1.65;margin-bottom:8px}
+.oc-foot{display:flex;align-items:center;justify-content:space-between}
+.oc-time{font-family:var(--font-m);font-size:11px;color:var(--ink3)}
+.oc-time.warn{color:var(--red)}
+.oc-amt{font-family:var(--font-d);font-size:15px;font-weight:600;color:var(--ink)}
+.oc-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;text-transform:uppercase}
+.oc-tag.new-tag{background:var(--orange3);color:var(--orange)}
+.oc-tag.prep-tag{background:var(--amber2);color:var(--amber)}
+.oc-tag.ready-tag{background:var(--green2);color:var(--green)}
+.oc-actions{display:flex;gap:6px;margin-top:10px}
+.empty-col{text-align:center;padding:28px 12px;color:var(--ink4);font-size:13px}
+.ec-icon{font-size:24px;margin-bottom:6px;opacity:0.35}
+
+/* ── KITCHEN ─────────────────────────────────── */
+.kitchen-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.kcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.kcard.urg{border-color:rgba(224,85,32,0.4);background:rgba(224,85,32,0.02)}
+.kc-head{display:flex;align-items:center;justify-content:space-between}
+.kc-id{font-family:var(--font-m);font-size:11px;color:var(--ink3)}
+.kc-timer{font-family:var(--font-m);font-size:13px;font-weight:500;color:var(--amber)}
+.kc-timer.urg{color:var(--red)}
+.kc-items{display:flex;flex-direction:column;gap:6px}
+.kci{display:flex;align-items:center;gap:10px}
+.kci-check{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border2);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.12s;font-size:11px;color:transparent}
+.kci-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.kci-name{flex:1;font-size:13px;color:var(--ink)}
+.kci-name.done{text-decoration:line-through;opacity:0.45}
+.kci-qty{font-family:var(--font-m);font-size:11px;color:var(--ink3)}
+.kc-prog{background:var(--bg2);border-radius:3px;height:4px;overflow:hidden}
+.kc-prog-bar{height:100%;border-radius:3px;background:var(--green);transition:width 0.3s}
+.kc-foot{display:flex;align-items:center;justify-content:space-between}
+
+/* ── MENU ────────────────────────────────────── */
+.menu-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-in{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 12px;font-size:13px;color:var(--ink);outline:none;width:200px;transition:border-color 0.15s}
+.search-in:focus{border-color:var(--orange)}
+.search-in::placeholder{color:var(--ink4)}
+select.search-in{width:160px;cursor:pointer}
+.mtable{width:100%;border-collapse:collapse}
+.mtable th{font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink3);padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
+.mtable td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.mtable tr:last-child td{border-bottom:none}
+.mtable tr:hover td{background:rgba(247,244,239,0.6)}
+.item-name-cell{font-weight:500;color:var(--ink)}
+.item-desc-cell{font-size:11px;color:var(--ink3);margin-top:2px}
+.price-cell{font-family:var(--font-m);font-weight:500}
+.vdot-sm{width:10px;height:10px;border-radius:2px;border:1.5px solid;display:inline-block;vertical-align:middle}
+.vdot-sm.v{border-color:var(--green);background:var(--green)}
+.vdot-sm.n{border-color:var(--red);background:var(--red)}
+.toggle-sw{position:relative;width:34px;height:19px;display:inline-block;vertical-align:middle}
+.toggle-sw input{opacity:0;width:0;height:0}
+.ts-slider{position:absolute;inset:0;background:var(--bg3);border-radius:9px;cursor:pointer;transition:0.2s}
+.ts-slider::before{content:'';position:absolute;width:13px;height:13px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.15)}
+.toggle-sw input:checked+.ts-slider{background:var(--green)}
+.toggle-sw input:checked+.ts-slider::before{transform:translateX(15px)}
+.cat-chip{font-size:11px;background:var(--bg2);color:var(--ink3);padding:2px 8px;border-radius:var(--r-xs)}
+
+/* ── MODAL ───────────────────────────────────── */
+.modal-ov{position:fixed;inset:0;background:rgba(26,22,16,0.45);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal-ov.open{display:flex}
+.modal-box{background:var(--surface);border-radius:var(--r);width:90%;max-width:460px;max-height:85vh;overflow-y:auto}
+.modal-hd{padding:20px 22px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-ttl{font-family:var(--font-d);font-size:17px;font-weight:600}
+.modal-x{background:none;border:none;font-size:20px;color:var(--ink3);cursor:pointer;padding:2px}
+.modal-bd{padding:18px 22px 22px;display:flex;flex-direction:column;gap:14px}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-actions{display:flex;gap:8px;justify-content:flex-end}
+
+/* ── ANALYTICS ───────────────────────────────── */
+.analytics-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.chart-wrap{position:relative;height:190px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:100%;padding-bottom:22px}
+.bar-g{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;cursor:pointer;transition:height 0.5s cubic-bezier(0.34,1.2,0.64,1);position:relative}
+.bar:hover{opacity:0.8}
+.bar::after{content:attr(data-v);position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--ink3);font-family:var(--font-m);white-space:nowrap;opacity:0;transition:opacity 0.15s}
+.bar:hover::after{opacity:1}
+.bar-lbl{font-size:10px;color:var(--ink3);font-family:var(--font-m);text-align:center}
+.top-list{display:flex;flex-direction:column;gap:8px}
+.top-row{display:flex;align-items:center;gap:8px}
+.top-rank{font-family:var(--font-m);font-size:11px;color:var(--ink3);width:16px}
+.top-name{font-size:12px;color:var(--ink);flex:1}
+.top-bar-w{flex:1;background:var(--bg2);border-radius:3px;height:5px;overflow:hidden}
+.top-bar-f{height:100%;border-radius:3px;background:var(--orange)}
+.top-cnt{font-family:var(--font-m);font-size:11px;color:var(--ink3);min-width:28px;text-align:right}
+.earn-rows{display:flex;flex-direction:column}
+.earn-row{display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px solid var(--border)}
+.earn-row:last-child{border-bottom:none;font-weight:600;font-family:var(--font-d);font-size:14px}
+.earn-lbl{color:var(--ink3)}
+.earn-v{font-family:var(--font-m);color:var(--ink)}
+.period-tabs{display:flex;gap:4px}
+.ptab{background:none;border:1px solid var(--border);border-radius:var(--r-sm);padding:4px 10px;font-size:12px;color:var(--ink2);transition:all 0.1s}
+.ptab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ── TOAST ───────────────────────────────────── */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.tw-toast{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-sm);padding:11px 15px;box-shadow:var(--shadow);font-size:13px;display:flex;align-items:center;gap:9px;pointer-events:all;transform:translateX(20px);opacity:0;transition:all 0.3s cubic-bezier(0.34,1.5,0.64,1);max-width:280px}
+.tw-toast.show{transform:none;opacity:1}
+.tw-accent{width:3px;height:30px;border-radius:2px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">fork<span>fleet</span><sub>kitchen</sub></div>
+    <div class="login-sub">Sign in to manage your restaurant</div>
+    <div id="loginErr" class="login-error"></div>
+    <div class="form-row">
+      <label class="form-label">Restaurant email or phone</label>
+      <input class="form-input" id="lEmail" type="text" placeholder="owner@restaurant.com"/>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Password</label>
+      <input class="form-input" id="lPass" type="password" placeholder="Your password"/>
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign in to dashboard →</button>
+    <div class="login-demo">
+      Demo credentials<br/>
+      Email: <strong>owner@bukhara.com</strong> · Password: <strong>demo1234</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ════════════════════════════════════ -->
+<div id="appShell">
+<div class="shell">
+
+<header>
+  <div class="hdr-logo">fork<span>fleet</span><sub>kitchen</sub></div>
+  <div class="hdr-status" id="statusBar">
+    <div class="hdr-dot on" id="statusDot"></div>
+    <span class="hdr-status-label" id="statusLbl">Open for orders</span>
+    <button class="status-toggle-btn" id="statusToggle" onclick="toggleStatus()">Close restaurant</button>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-rest-name" id="hdrRestName">Bukhara Tandoor</span>
+    <div class="hdr-notif" onclick="showPage('orders')">
+      🔔<span class="hdr-notif-badge" id="notifCount">3</span>
+    </div>
+    <div class="hdr-user" onclick="confirmLogout()">
+      <div class="hdr-avatar" id="hdrAvatar">BT</div>
+      <span class="hdr-user-name" id="hdrUserName">Owner</span>
+      <span style="font-size:10px;color:var(--ink4)">▾</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-rest-info">
+    <div class="nri-name" id="navRestName">Bukhara Tandoor</div>
+    <div class="nri-loc">📍 <span id="navRestLoc">Connaught Place, Delhi</span></div>
+  </div>
+  <div class="nav-sect">Operations</div>
+  <button class="nav-item active" data-page="orders" onclick="showPage('orders',this)">
+    <span class="nav-icon">📋</span>Order queue
+    <span class="nav-badge" id="newBadge">3</span>
+  </button>
+  <button class="nav-item" data-page="kitchen" onclick="showPage('kitchen',this)">
+    <span class="nav-icon">🍳</span>Kitchen
+    <span class="nav-badge a" id="kitchenBadge">2</span>
+  </button>
+  <hr class="nav-divider"/>
+  <div class="nav-sect">Management</div>
+  <button class="nav-item" data-page="menu" onclick="showPage('menu',this)">
+    <span class="nav-icon">🍽</span>Menu
+  </button>
+  <button class="nav-item" data-page="analytics" onclick="showPage('analytics',this)">
+    <span class="nav-icon">📊</span>Analytics
+  </button>
+  <hr class="nav-divider"/>
+  <button class="nav-item" onclick="confirmLogout()" style="margin-top:auto">
+    <span class="nav-icon">→</span>Sign out
+  </button>
+</nav>
+
+<main>
+  <!-- ORDERS -->
+  <div class="page active" id="page-orders">
+    <div class="pg-head">
+      <div><div class="pg-title">Order queue</div><div class="pg-sub">Live incoming orders</div></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--orange);display:inline-block;animation:blink 1.5s infinite"></span>Live</span>
+        <button class="btn btn-ghost btn-sm" onclick="simulateNewOrder()">+ Simulate order</button>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-top"><span class="stat-lbl">New</span><span class="stat-icon">🆕</span></div><div class="stat-val" id="sNew">3</div><div class="stat-delta">Awaiting acceptance</div><div class="stat-accent" style="background:var(--orange)"></div></div>
+      <div class="stat"><div class="stat-top"><span class="stat-lbl">Preparing</span><span class="stat-icon">🍳</span></div><div class="stat-val" id="sPrep">2</div><div class="stat-delta">In kitchen</div><div class="stat-accent" style="background:var(--amber)"></div></div>
+      <div class="stat"><div class="stat-top"><span class="stat-lbl">Ready</span><span class="stat-icon">✅</span></div><div class="stat-val" id="sReady">1</div><div class="stat-delta">Awaiting rider</div><div class="stat-accent" style="background:var(--green)"></div></div>
+      <div class="stat"><div class="stat-top"><span class="stat-lbl">Today</span><span class="stat-icon">📦</span></div><div class="stat-val">27</div><div class="stat-delta" style="color:var(--green)">+22% vs yesterday</div><div class="stat-accent" style="background:var(--blue)"></div></div>
+    </div>
+    <div class="kanban">
+      <div><div class="col-head"><span class="col-title">🔴 New</span><span class="col-count" id="colN">3</span></div><div class="order-cards" id="col-new"></div></div>
+      <div><div class="col-head"><span class="col-title">🟡 Preparing</span><span class="col-count" id="colP">2</span></div><div class="order-cards" id="col-preparing"></div></div>
+      <div><div class="col-head"><span class="col-title">🟢 Ready</span><span class="col-count" id="colR">1</span></div><div class="order-cards" id="col-ready"></div></div>
+    </div>
+  </div>
+
+  <!-- KITCHEN -->
+  <div class="page" id="page-kitchen">
+    <div class="pg-head"><div><div class="pg-title">Kitchen status</div><div class="pg-sub">Check off each item as it's prepared</div></div></div>
+    <div class="kitchen-grid" id="kitchenGrid"></div>
+  </div>
+
+  <!-- MENU -->
+  <div class="page" id="page-menu">
+    <div class="pg-head">
+      <div><div class="pg-title">Menu management</div><div class="pg-sub" id="menuSubLbl"></div></div>
+      <button class="btn btn-primary" onclick="openAddModal()">+ Add item</button>
+    </div>
+    <div class="card" style="padding:12px 16px">
+      <div class="menu-toolbar">
+        <input class="search-in" type="text" placeholder="Search items…" oninput="filterMenu(this.value)" id="menuQ"/>
+        <select class="search-in" onchange="filterCat(this.value)" id="catSel"></select>
+        <span style="margin-left:auto;font-size:12px;color:var(--ink4)" id="menuNote"></span>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="mtable"><thead><tr><th>Item</th><th>Category</th><th>Price</th><th>Type</th><th>Available</th><th>Actions</th></tr></thead><tbody id="menuBody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="page" id="page-analytics">
+    <div class="pg-head">
+      <div><div class="pg-title">Analytics & earnings</div><div class="pg-sub">Restaurant performance</div></div>
+      <div class="period-tabs"><button class="ptab active" onclick="setPeriod('7d',this)">7d</button><button class="ptab" onclick="setPeriod('30d',this)">30d</button><button class="ptab" onclick="setPeriod('90d',this)">90d</button></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-top"><span class="stat-lbl">Revenue</span><span class="stat-icon">💰</span></div><div class="stat-val" id="aRev">₹0</div><div class="stat-delta" id="aRevD"></div><div class="stat-accent" style="background:var(--orange)"></div></div>
+      <div class="stat"><div class="stat-top"><span class="stat-lbl">Orders</span><span class="stat-icon">📦</span></div><div class="stat-val" id="aOrd">0</div><div class="stat-delta" id="aOrdD"></div><div class="stat-accent" style="background:var(--blue)"></div></div>
+      <div class="stat"><div class="stat-top"><span class="stat-lbl">Avg order</span><span class="stat-icon">📈</span></div><div class="stat-val" id="aAov">₹0</div><div class="stat-delta">Per order</div><div class="stat-accent" style="background:var(--green)"></div></div>
+      <div class="stat"><div class="stat-top"><span class="stat-lbl">Rating</span><span class="stat-icon">⭐</span></div><div class="stat-val">4.6★</div><div class="stat-delta">Based on 412 reviews</div><div class="stat-accent" style="background:var(--amber)"></div></div>
+    </div>
+    <div class="analytics-grid">
+      <div class="card"><div class="card-title" id="chartLbl">Revenue — last 7 days</div><div class="chart-wrap"><div class="bars" id="chartBars"></div></div></div>
+      <div class="card"><div class="card-title">Top items</div><div class="top-list" id="topList"></div></div>
+    </div>
+    <div class="analytics-grid">
+      <div class="card"><div class="card-title">Hourly orders</div><div class="chart-wrap" style="height:140px"><div class="bars" id="hourlyBars"></div></div></div>
+      <div class="card"><div class="card-title">Earnings breakdown</div><div class="earn-rows" id="earnRows"></div></div>
+    </div>
+  </div>
+</main>
+</div>
+</div>
+
+<!-- ADD ITEM MODAL -->
+<div class="modal-ov" id="addModal">
+  <div class="modal-box">
+    <div class="modal-hd"><div class="modal-ttl" id="modalTtl">Add menu item</div><button class="modal-x" onclick="closeModal()">×</button></div>
+    <div class="modal-bd">
+      <div class="form-row"><label class="form-label">Item name *</label><input class="form-input" id="fi-name" placeholder="e.g. Butter Chicken"/></div>
+      <div class="form-row"><label class="form-label">Description</label><input class="form-input" id="fi-desc" placeholder="Short description"/></div>
+      <div class="form-2col">
+        <div class="form-row"><label class="form-label">Price (₹) *</label><input class="form-input" id="fi-price" type="number" min="0" placeholder="299"/></div>
+        <div class="form-row"><label class="form-label">Category</label><select class="form-input" id="fi-cat"><option>Mains</option><option>Starters</option><option>Breads</option><option>Desserts</option><option>Beverages</option></select></div>
+      </div>
+      <div class="form-row"><label class="form-label">Type</label>
+        <div style="display:flex;gap:14px;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;font-weight:400"><input type="radio" name="fi-veg" value="veg" checked/> Veg</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;font-weight:400"><input type="radio" name="fi-veg" value="non"/> Non-veg</label>
+        </div>
+      </div>
+      <div class="form-actions"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveItem()">Save item</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ── ACCOUNTS ─────────────────────────────────────────────────────────────────
+
+const ACCOUNTS = [
+  { email:'owner@bukhara.com', password:'demo1234', name:'Ravi Sharma', restName:'Bukhara Tandoor', restLoc:'Connaught Place, New Delhi', initials:'BT' },
+  { email:'owner@dragon.com', password:'demo1234', name:'Mei Chen', restName:'Dragon Palace', restLoc:'Hauz Khas, New Delhi', initials:'DP' },
+  { email:'owner@pizza.com', password:'demo1234', name:'Marco Rossi', restName:'Pizza Rustica', restLoc:'Khan Market, New Delhi', initials:'PR' },
+];
+
+let currentOwner = JSON.parse(sessionStorage.getItem('ff_owner') || 'null');
+
+function doLogin() {
+  const email = document.getElementById('lEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('lPass').value;
+  const owner = ACCOUNTS.find(a => a.email === email && a.password === pass);
+  if (!owner) {
+    const err = document.getElementById('loginErr');
+    err.textContent = 'Invalid credentials. Try owner@bukhara.com / demo1234';
+    err.style.display = 'block';
+    return;
+  }
+  sessionStorage.setItem('ff_owner', JSON.stringify(owner));
+  currentOwner = owner;
+  initDashboard(owner);
+}
+
+function initDashboard(owner) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'block';
+  document.getElementById('hdrRestName').textContent = owner.restName;
+  document.getElementById('hdrAvatar').textContent = owner.initials;
+  document.getElementById('hdrUserName').textContent = owner.name.split(' ')[0];
+  document.getElementById('navRestName').textContent = owner.restName;
+  document.getElementById('navRestLoc').textContent = owner.restLoc;
+  renderOrders(); renderMenu(); renderKitchen(); renderAnalytics('7d');
+}
+
+function confirmLogout() {
+  if (confirm('Sign out of the dashboard?')) {
+    sessionStorage.removeItem('ff_owner');
+    location.reload();
+  }
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+let orders = [
+  {id:'FF-20481',status:'new',items:[{n:'Butter Chicken',q:2},{n:'Garlic Naan',q:3}],total:820,ts:Date.now()-120000,multi:true,est:25},
+  {id:'FF-20479',status:'new',items:[{n:'Dal Makhani',q:1},{n:'Lachha Paratha',q:2}],total:340,ts:Date.now()-240000,multi:false,est:20},
+  {id:'FF-20477',status:'new',items:[{n:'Seekh Kebab',q:2}],total:640,ts:Date.now()-60000,multi:true,est:30},
+  {id:'FF-20475',status:'preparing',items:[{n:'Paneer Tikka',q:2},{n:'Garlic Naan',q:4}],total:820,ts:Date.now()-600000,multi:false,est:15},
+  {id:'FF-20473',status:'preparing',items:[{n:'Butter Chicken',q:1},{n:'Dal Makhani',q:1}],total:560,ts:Date.now()-720000,multi:true,est:20},
+  {id:'FF-20470',status:'ready',items:[{n:'Lamb Rogan Josh',q:2}],total:760,ts:Date.now()-1200000,multi:false,est:0},
+];
+
+let menuItems = [
+  {id:1,name:'Butter Chicken',desc:'Slow-cooked in rich tomato gravy',price:320,veg:false,cat:'Mains',avail:true},
+  {id:2,name:'Dal Makhani',desc:'Overnight simmered black lentils',price:240,veg:true,cat:'Mains',avail:true},
+  {id:3,name:'Lamb Rogan Josh',desc:'Kashmiri spiced slow-cook',price:380,veg:false,cat:'Mains',avail:true},
+  {id:4,name:'Paneer Tikka',desc:'Char-grilled cottage cheese',price:290,veg:true,cat:'Starters',avail:true},
+  {id:5,name:'Garlic Naan',desc:'Tandoor-baked with butter',price:60,veg:true,cat:'Breads',avail:true},
+  {id:6,name:'Lachha Paratha',desc:'Flaky whole-wheat flatbread',price:50,veg:true,cat:'Breads',avail:true},
+  {id:7,name:'Seekh Kebab',desc:'Minced lamb on skewer',price:320,veg:false,cat:'Starters',avail:true},
+  {id:8,name:'Mango Lassi',desc:'Chilled alphonso mango yogurt',price:90,veg:true,cat:'Beverages',avail:true},
+];
+
+let kitchenOrders = [
+  {id:'FF-20475',items:[{n:'Paneer Tikka',q:2,done:true},{n:'Garlic Naan',q:4,done:false}],ts:Date.now()-600000,est:15},
+  {id:'FF-20473',items:[{n:'Butter Chicken',q:1,done:false},{n:'Dal Makhani',q:1,done:false}],ts:Date.now()-720000,est:20},
+];
+
+const ANALYTICS={
+  '7d':{rev:42800,ord:138,aov:310,data:[5200,6100,5800,7400,6200,7800,6900],labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],pRev:36200,pOrd:112},
+  '30d':{rev:178400,ord:576,aov:310,data:[24000,31000,22000,36000,29000,38000],labels:['W1','W2','W3','W4','W5','W6'],pRev:152000,pOrd:490},
+  '90d':{rev:524000,ord:1690,aov:310,data:[158000,174000,192000],labels:['Jan','Feb','Mar'],pRev:452000,pOrd:1460},
+};
+const TOP=[{n:'Butter Chicken',c:312},{n:'Garlic Naan',c:284},{n:'Dal Makhani',c:218},{n:'Seekh Kebab',c:176},{n:'Paneer Tikka',c:142}];
+const HOURLY=[0,0,0,0,0,0,2,10,22,38,52,44,60,56,34,28,46,68,82,72,48,32,14,4];
+
+let isOpen=true,menuQ='',menuCatQ='',editId=null,curPeriod='7d';
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+
+function toggleStatus(){
+  isOpen=!isOpen;
+  document.getElementById('statusDot').className='hdr-dot '+(isOpen?'on':'off');
+  document.getElementById('statusLbl').textContent=isOpen?'Open for orders':'Closed';
+  document.getElementById('statusToggle').textContent=isOpen?'Close restaurant':'Open restaurant';
+  toast(isOpen?'Restaurant is now open':'Restaurant is now closed — orders paused', isOpen?'var(--green)':'var(--red)');
+}
+
+// ── PAGE NAV ──────────────────────────────────────────────────────────────────
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  else { const b=document.querySelector(`[data-page="${name}"]`); if(b) b.classList.add('active'); }
+  if(name==='analytics') renderAnalytics(curPeriod);
+  if(name==='menu') renderMenu();
+  if(name==='kitchen') renderKitchen();
+}
+
+// ── ORDERS ────────────────────────────────────────────────────────────────────
+
+function elapsed(ts){const m=Math.floor((Date.now()-ts)/60000);return m<1?'Just now':m+' min ago'}
+
+function renderOrders(){
+  const cols={new:[],preparing:[],ready:[]};
+  orders.forEach(o=>{if(cols[o.status])cols[o.status].push(o);});
+  document.getElementById('sNew').textContent=cols.new.length;
+  document.getElementById('sPrep').textContent=cols.preparing.length;
+  document.getElementById('sReady').textContent=cols.ready.length;
+  document.getElementById('newBadge').textContent=cols.new.length;
+  document.getElementById('kitchenBadge').textContent=cols.preparing.length;
+  document.getElementById('notifCount').textContent=cols.new.length;
+  document.getElementById('colN').textContent=cols.new.length;
+  document.getElementById('colP').textContent=cols.preparing.length;
+  document.getElementById('colR').textContent=cols.ready.length;
+  renderCol('col-new',cols.new,'new');
+  renderCol('col-preparing',cols.preparing,'preparing');
+  renderCol('col-ready',cols.ready,'ready');
+}
+
+function renderCol(id,list,status){
+  const col=document.getElementById(id);
+  if(!list.length){col.innerHTML=`<div class="empty-col"><div class="ec-icon">${status==='ready'?'✅':status==='preparing'?'🍳':'📭'}</div>No orders</div>`;return;}
+  col.innerHTML=list.map(o=>{
+    const mins=Math.floor((Date.now()-o.ts)/60000);
+    const urg=status==='new'&&mins>3;
+    const tagCls={new:'new-tag',preparing:'prep-tag',ready:'ready-tag'}[status];
+    const tagLbl={new:'New',preparing:'Preparing',ready:'Ready'}[status];
+    let acts='';
+    if(status==='new') acts=`<button class="btn btn-green btn-sm" onclick="acceptOrder('${o.id}')">✓ Accept</button><button class="btn btn-ghost btn-sm" onclick="rejectOrder('${o.id}')">Reject</button>`;
+    else if(status==='preparing') acts=`<button class="btn btn-primary btn-sm" style="width:100%" onclick="markReady('${o.id}')">Mark as ready →</button>`;
+    else acts=`<div style="font-size:11px;color:var(--ink3);text-align:center;width:100%">Awaiting rider</div>`;
+    return `<div class="ocard ${status==='new'?'pulse':status==='ready'?'done':''}">
+      <div class="oc-id">${o.id}${o.multi?'<span class="oc-multi">multi-rest</span>':''}</div>
+      <div class="oc-items">${o.items.map(i=>`<strong>${i.q}×</strong> ${i.n}`).join('<br/>')}</div>
+      <div class="oc-foot">
+        <span class="oc-time ${urg?'warn':''}">${elapsed(o.ts)}</span>
+        <span class="oc-amt">₹${o.total}</span>
+      </div>
+      <div style="margin-top:6px;display:flex;align-items:center;justify-content:space-between">
+        <span class="oc-tag ${tagCls}">${tagLbl}</span>
+        ${status==='preparing'?`<span class="oc-time" style="color:var(--amber)">~${Math.max(0,o.est-mins)} min</span>`:''}
+      </div>
+      <div class="oc-actions">${acts}</div>
+    </div>`;
+  }).join('');
+}
+
+function acceptOrder(id){
+  const o=orders.find(x=>x.id===id); if(!o)return;
+  o.status='preparing';
+  kitchenOrders.push({id:o.id,items:o.items.map(i=>({n:i.n,q:i.q,done:false})),ts:Date.now(),est:o.est});
+  renderOrders(); renderKitchen();
+  toast('Order '+id+' accepted — kitchen notified','var(--green)');
+}
+function rejectOrder(id){orders=orders.filter(o=>o.id!==id);renderOrders();toast('Order '+id+' rejected','var(--red)');}
+function markReady(id){
+  const o=orders.find(x=>x.id===id); if(!o)return;
+  o.status='ready';
+  kitchenOrders=kitchenOrders.filter(k=>k.id!==id);
+  renderOrders(); renderKitchen();
+  toast('Order '+id+' is ready for pickup!','var(--green)');
+}
+
+function simulateNewOrder(){
+  const id='FF-2048'+Math.floor(Math.random()*9);
+  const opts=[[{n:'Butter Chicken',q:1},{n:'Naan',q:2}],[{n:'Dal Makhani',q:2}],[{n:'Seekh Kebab',q:1},{n:'Lassi',q:1}]];
+  orders.unshift({id,status:'new',items:opts[Math.floor(Math.random()*opts.length)],total:Math.floor(300+Math.random()*500),ts:Date.now(),multi:Math.random()>0.5,est:25});
+  renderOrders();
+  toast('New order '+id+' received!','var(--orange)');
+}
+
+// ── KITCHEN ───────────────────────────────────────────────────────────────────
+
+function renderKitchen(){
+  const g=document.getElementById('kitchenGrid');
+  if(!kitchenOrders.length){g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink4)"><div style="font-size:28px;margin-bottom:8px;opacity:0.3">🍳</div>No active orders in kitchen</div>`;return;}
+  g.innerHTML=kitchenOrders.map((ko,ki)=>{
+    const done=ko.items.filter(i=>i.done).length;
+    const tot=ko.items.length;
+    const pct=Math.round(done/tot*100);
+    const mins=Math.floor((Date.now()-ko.ts)/60000);
+    const urg=mins>(ko.est*0.8);
+    return `<div class="kcard ${urg?'urg':''}">
+      <div class="kc-head"><span class="kc-id">${ko.id}</span><span class="kc-timer ${urg?'urg':''}">~${Math.max(0,ko.est-mins)} min left</span></div>
+      <div class="kc-items">${ko.items.map((item,ii)=>`<div class="kci">
+        <div class="kci-check ${item.done?'done':''}" onclick="toggleKci(${ki},${ii})"> ${item.done?'✓':''} </div>
+        <span class="kci-name ${item.done?'done':''}">${item.n}</span>
+        <span class="kci-qty">×${item.q}</span>
+      </div>`).join('')}</div>
+      <div class="kc-prog"><div class="kc-prog-bar" style="width:${pct}%"></div></div>
+      <div class="kc-foot">
+        <span style="font-size:11px;color:var(--ink3)">${done}/${tot} items</span>
+        ${done===tot?`<button class="btn btn-green btn-sm" onclick="markReady('${ko.id}')">Mark ready →</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleKci(ki,ii){kitchenOrders[ki].items[ii].done=!kitchenOrders[ki].items[ii].done;renderKitchen();}
+
+// ── MENU ──────────────────────────────────────────────────────────────────────
+
+function renderMenu(){
+  const cats=[...new Set(menuItems.map(i=>i.cat))].sort();
+  const sel=document.getElementById('catSel');
+  sel.innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option ${menuCatQ===c?'selected':''}>${c}</option>`).join('');
+  let list=menuItems;
+  if(menuQ) list=list.filter(i=>i.name.toLowerCase().includes(menuQ)||(i.desc||'').toLowerCase().includes(menuQ));
+  if(menuCatQ) list=list.filter(i=>i.cat===menuCatQ);
+  document.getElementById('menuSubLbl').textContent=`${list.length} items · ${cats.length} categories`;
+  document.getElementById('menuNote').textContent=(menuQ||menuCatQ)?`Showing ${list.length} of ${menuItems.length}`:'';
+  document.getElementById('menuBody').innerHTML=list.map(item=>`<tr>
+    <td><div class="item-name-cell">${item.name}</div><div class="item-desc-cell">${item.desc||''}</div></td>
+    <td><span class="cat-chip">${item.cat}</span></td>
+    <td class="price-cell">₹${item.price}</td>
+    <td><div class="vdot-sm ${item.veg?'v':'n'}"></div></td>
+    <td><label class="toggle-sw"><input type="checkbox" ${item.avail?'checked':''} onchange="toggleAvail(${item.id},this.checked)"/><span class="ts-slider"></span></label></td>
+    <td><div style="display:flex;gap:5px"><button class="btn btn-ghost btn-sm" onclick="editItem(${item.id})">Edit</button><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delItem(${item.id})">Delete</button></div></td>
+  </tr>`).join('')||`<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ink4)">No items found</td></tr>`;
+}
+
+function filterMenu(q){menuQ=q.toLowerCase();renderMenu();}
+function filterCat(v){menuCatQ=v;renderMenu();}
+function toggleAvail(id,v){const i=menuItems.find(x=>x.id===id);if(i){i.avail=v;toast(i.name+' marked as '+(v?'available':'unavailable'),v?'var(--green)':'var(--amber)');};}
+function delItem(id){const i=menuItems.find(x=>x.id===id);if(!i||!confirm(`Delete "${i.name}"?`))return;menuItems=menuItems.filter(x=>x.id!==id);renderMenu();toast(i.name+' deleted','var(--red)');}
+function openAddModal(){editId=null;document.getElementById('modalTtl').textContent='Add menu item';document.getElementById('fi-name').value='';document.getElementById('fi-desc').value='';document.getElementById('fi-price').value='';document.querySelector('input[name="fi-veg"][value="veg"]').checked=true;document.getElementById('addModal').classList.add('open');}
+function editItem(id){const i=menuItems.find(x=>x.id===id);if(!i)return;editId=id;document.getElementById('modalTtl').textContent='Edit item';document.getElementById('fi-name').value=i.name;document.getElementById('fi-desc').value=i.desc||'';document.getElementById('fi-price').value=i.price;document.getElementById('fi-cat').value=i.cat;document.querySelector(`input[name="fi-veg"][value="${i.veg?'veg':'non'}"]`).checked=true;document.getElementById('addModal').classList.add('open');}
+function closeModal(){document.getElementById('addModal').classList.remove('open');}
+function saveItem(){
+  const name=document.getElementById('fi-name').value.trim();
+  const price=parseFloat(document.getElementById('fi-price').value);
+  const cat=document.getElementById('fi-cat').value;
+  const veg=document.querySelector('input[name="fi-veg"]:checked').value==='veg';
+  const desc=document.getElementById('fi-desc').value.trim();
+  if(!name||isNaN(price)){toast('Please fill in name and price','var(--red)');return;}
+  if(editId){const i=menuItems.find(x=>x.id===editId);Object.assign(i,{name,desc,price,cat,veg});toast(name+' updated','var(--green)');}
+  else{menuItems.push({id:Date.now(),name,desc,price,cat,veg,avail:true});toast(name+' added to menu','var(--green)');}
+  closeModal();renderMenu();
+}
+document.getElementById('addModal').addEventListener('click',e=>{if(e.target===document.getElementById('addModal'))closeModal();});
+
+// ── ANALYTICS ────────────────────────────────────────────────────────────────
+
+function setPeriod(p,btn){curPeriod=p;document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAnalytics(p);}
+
+function renderAnalytics(p){
+  const d=ANALYTICS[p];
+  const rd=((d.rev-d.pRev)/d.pRev*100).toFixed(1);
+  const od=((d.ord-d.pOrd)/d.pOrd*100).toFixed(1);
+  document.getElementById('aRev').textContent='₹'+d.rev.toLocaleString();
+  document.getElementById('aOrd').textContent=d.ord;
+  document.getElementById('aAov').textContent='₹'+d.aov;
+  document.getElementById('aRevD').textContent=(rd>0?'+':'')+rd+'% vs prev';
+  document.getElementById('aRevD').className='stat-delta'+(rd<0?' neg':'');
+  document.getElementById('aOrdD').textContent=(od>0?'+':'')+od+'% vs prev';
+  const chartLbls={'7d':'Revenue — last 7 days','30d':'Revenue — last 30 days','90d':'Revenue — last 90 days'};
+  document.getElementById('chartLbl').textContent=chartLbls[p];
+  const maxV=Math.max(...d.data);
+  document.getElementById('chartBars').innerHTML=d.data.map((v,i)=>`<div class="bar-g"><div class="bar" style="height:${Math.round(v/maxV*100)}%;background:${v/maxV>0.85?'var(--orange)':'var(--bg3)'};transition:height 0.45s ${i*0.05}s" data-v="₹${v.toLocaleString()}"></div><div class="bar-lbl">${d.labels[i]}</div></div>`).join('');
+  const maxC=TOP[0].c;
+  document.getElementById('topList').innerHTML=TOP.map((t,i)=>`<div class="top-row"><span class="top-rank">${i+1}</span><span class="top-name">${t.n}</span><div class="top-bar-w"><div class="top-bar-f" style="width:${Math.round(t.c/maxC*100)}%;transition:width 0.5s ${i*0.08}s"></div></div><span class="top-cnt">${t.c}</span></div>`).join('');
+  const slice=HOURLY.slice(8,22);
+  const maxH=Math.max(...slice);
+  document.getElementById('hourlyBars').innerHTML=slice.map((v,i)=>`<div class="bar-g"><div class="bar" style="height:${Math.round(v/maxH*100)}%;background:var(--blue2);border-top:2px solid var(--blue);transition:height 0.4s ${i*0.03}s" data-v="${v}"></div><div class="bar-lbl" style="font-size:9px">${i%2===0?(8+i)+':00':''}</div></div>`).join('');
+  const gross=d.rev;
+  const comm=Math.round(gross*0.15);
+  const dlv=d.ord*30;
+  const gst=Math.round(gross*0.05);
+  const net=gross-comm+dlv-gst;
+  document.getElementById('earnRows').innerHTML=[
+    ['Gross revenue','₹'+gross.toLocaleString()],
+    ['Commission (15%)','-₹'+comm.toLocaleString()],
+    ['Delivery credits','+₹'+dlv.toLocaleString()],
+    ['GST (5%)','-₹'+gst.toLocaleString()],
+    ['Net payout','₹'+net.toLocaleString()],
+  ].map(([l,v])=>`<div class="earn-row"><span class="earn-lbl">${l}</span><span class="earn-v">${v}</span></div>`).join('');
+}
+
+// ── TOAST ────────────────────────────────────────────────────────────────────
+
+function toast(msg,color='var(--orange)'){
+  const w=document.getElementById('toastWrap');
+  const el=document.createElement('div');el.className='tw-toast';
+  el.innerHTML=`<div class="tw-accent" style="background:${color}"></div><span>${msg}</span>`;
+  w.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),350);},3200);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+
+setInterval(()=>{if(document.getElementById('page-orders').classList.contains('active'))renderOrders();},60000);
+if(currentOwner) initDashboard(currentOwner);
+</script>
+</body>
+</html>

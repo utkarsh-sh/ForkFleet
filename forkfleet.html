@@ -128,6 +128,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .cart-fee-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);padding:3px 0}
 .cart-total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:600;color:var(--text);padding:8px 0 0;font-family:var(--font-display)}
 .cart-info-box{background:var(--blue-soft);border:1px solid rgba(58,127,212,0.15);border-radius:var(--radius-sm);padding:10px 12px;margin:12px 0;font-size:11px;color:var(--blue);line-height:1.5}
+.fusion-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 12px;margin:12px 0 2px}
+.fusion-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.fusion-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2)}
+.fusion-chip{font-size:10px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:20px;border:1px solid rgba(232,82,42,0.25)}
+.fusion-line{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);padding:3px 0}
+.fusion-line strong{color:var(--text);font-weight:600}
+.fusion-rests{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fusion-rest{font-size:11px;color:var(--text2);border:1px solid var(--border);padding:3px 7px;border-radius:20px;background:var(--bg2)}
 .checkout-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:14px;font-family:var(--font-display);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;margin-top:12px}
 .checkout-btn:hover{background:var(--accent2);transform:translateY(-1px)}
 .checkout-btn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;transform:none}
@@ -142,6 +150,36 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
 .track-rest-row{background:var(--bg3);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
 .track-rest-name{font-size:13px;color:var(--text)}
 .track-status-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.track-rest-main{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.track-rest-left{display:flex;align-items:center;gap:8px}
+.prep-progress{margin-top:7px}
+.prep-head{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:5px}
+.prep-bar{height:6px;border-radius:10px;background:var(--bg4);overflow:hidden;border:1px solid var(--border)}
+.prep-fill{height:100%;border-radius:10px;transition:width 0.45s ease}
+.prep-fill.preparing{background:linear-gradient(90deg,#c98a2a,#e8b45f)}
+.prep-fill.ready{background:linear-gradient(90deg,#3d9e5f,#58b77a)}
+.prep-fill.picked{background:linear-gradient(90deg,#3a7fd4,#66a2ea)}
+.prep-fill.delivered{background:linear-gradient(90deg,#2faa5f,#66d28d)}
+.delay-card{display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 12px;margin:0 0 14px}
+.delay-card.show{display:block}
+.delay-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.delay-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2)}
+.delay-chip{font-size:10px;padding:2px 8px;border-radius:20px}
+.delay-chip.watch{background:var(--amber-soft);color:var(--amber)}
+.delay-chip.recovered{background:var(--green-soft);color:var(--green)}
+.delay-msg{font-size:12px;color:var(--text2);line-height:1.45}
+.route-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px;margin:0 0 14px}
+.route-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.route-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2)}
+.route-chip{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--blue-soft);color:var(--blue);border:1px solid rgba(58,127,212,0.2)}
+.route-sub{font-size:12px;color:var(--text2);margin-bottom:10px}
+.map-canvas{position:relative;height:70px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:0 14px}
+.map-stop{position:absolute;top:28px;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:var(--bg4);border:1px solid var(--border2)}
+.map-stop.done{background:var(--green);border-color:var(--green)}
+.map-stop.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,82,42,0.18)}
+.map-stop.final{width:14px;height:14px;top:27px}
+.map-label{position:absolute;top:44px;transform:translateX(-50%);font-size:10px;color:var(--text3);white-space:nowrap}
+.map-rider{position:absolute;top:15px;transform:translateX(-50%);font-size:15px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.45))}
 .s-preparing{background:var(--amber-soft);color:var(--amber)}
 .s-ready{background:var(--green-soft);color:var(--green)}
 .s-picked{background:var(--blue-soft);color:var(--blue)}
@@ -226,6 +264,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
       <div id="cartBody"></div>
       <div id="cartFooter" style="display:none">
         <hr class="cart-divider"/>
+        <div class="fusion-card" id="fusionCard" style="display:none"></div>
         <div id="cartFees"></div>
         <div class="cart-total-row"><span>Total</span><span id="cartTotal">₹0</span></div>
         <div class="cart-info-box" id="multiInfo" style="display:none">
@@ -239,6 +278,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
     <div class="tracking-panel" id="trackingPanel">
       <div class="track-order-id" id="trackOrderId"></div>
       <div class="track-title">Order placed!</div>
+      <div class="delay-card" id="delayCard"></div>
+      <div class="route-card" id="routePreview"></div>
       <div class="track-rests" id="trackRests"></div>
       <div class="timeline" id="trackTimeline"></div>
       <div class="rider-card" id="riderCard" style="display:none">
@@ -258,11 +299,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
   <span id="toastMsg">Item added</span>
 </div>
 
+<script src="http://localhost:4000/socket.io/socket.io.js"></script>
 <script>
 const DATA = [
   {
     id:1, name:"Bukhara Tandoor", emoji:"🍛", bg:"#2a1a0e", tag:"Popular", tagClass:"tag-green",
     rating:"4.5", time:"25–35 min", cuisine:"north-indian", itemCount:0,
+    location:{ lat:28.6304, lng:77.2177 },
     items:[
       {id:101,name:"Butter Chicken",desc:"Slow-cooked in rich tomato gravy",price:320,veg:false},
       {id:102,name:"Dal Makhani",desc:"Overnight simmered black lentils",price:240,veg:true},
@@ -274,6 +317,7 @@ const DATA = [
   {
     id:2, name:"Dragon Palace", emoji:"🍜", bg:"#0d1a20", tag:"Fast delivery", tagClass:"tag-amber",
     rating:"4.2", time:"20–30 min", cuisine:"chinese", itemCount:0,
+    location:{ lat:28.5535, lng:77.2012 },
     items:[
       {id:201,name:"Veg Fried Rice",desc:"Wok-tossed with seasonal veg",price:180,veg:true},
       {id:202,name:"Chicken Manchurian",desc:"Crispy in spicy Manchurian sauce",price:260,veg:false},
@@ -284,6 +328,7 @@ const DATA = [
   {
     id:3, name:"Pizza Rustica", emoji:"🍕", bg:"#1a1510", tag:"Top rated", tagClass:"tag-blue",
     rating:"4.7", time:"30–40 min", cuisine:"italian", itemCount:0,
+    location:{ lat:28.5998, lng:77.2275 },
     items:[
       {id:301,name:"Margherita",desc:"San Marzano tomato, fior di latte",price:299,veg:true},
       {id:302,name:"BBQ Chicken",desc:"Smoked chicken, caramelised onion",price:399,veg:false},
@@ -294,6 +339,7 @@ const DATA = [
   {
     id:4, name:"Biryani House", emoji:"🫕", bg:"#1a1508", tag:"Bestseller", tagClass:"tag-green",
     rating:"4.6", time:"35–45 min", cuisine:"biryani", itemCount:0,
+    location:{ lat:28.6139, lng:77.2090 },
     items:[
       {id:401,name:"Hyderabadi Dum Biryani",desc:"Slow dum with saffron & fried onions",price:320,veg:false},
       {id:402,name:"Veg Dum Biryani",desc:"Royal basmati with whole spices",price:260,veg:true},
@@ -304,6 +350,7 @@ const DATA = [
   {
     id:5, name:"Mithai & Co.", emoji:"🍮", bg:"#200f1a", tag:"Trending", tagClass:"tag-amber",
     rating:"4.4", time:"15–25 min", cuisine:"dessert", itemCount:0,
+    location:{ lat:28.6358, lng:77.2245 },
     items:[
       {id:501,name:"Gulab Jamun (6 pcs)",desc:"Soft khoya dumplings in rose syrup",price:120,veg:true},
       {id:502,name:"Rabri Faluda",desc:"Chilled vermicelli with condensed milk",price:150,veg:true},
@@ -316,6 +363,9 @@ const DATA = [
 let cart = {}; // { itemId: { ...item, restaurantId, qty } }
 let expanded = {1:true,2:true};
 let activeFilter = 'all';
+const API_BASE = location.hostname === 'localhost'
+  ? 'http://localhost:4000/api/v1'
+  : `${location.origin}/api/v1`;
 
 function getRestaurantById(id) { return DATA.find(r => r.id === id); }
 function cartItems() { return Object.values(cart); }
@@ -451,15 +501,34 @@ function renderCart() {
     </div>`;
   }).join('');
 
+  const cartSubtotal = subtotal();
   const delivery = restCount * 30;
-  const taxes = Math.round(subtotal() * 0.05);
-  const total = subtotal() + delivery + taxes;
+  const taxes = Math.round(cartSubtotal * 0.05);
+  const total = cartSubtotal + delivery + taxes;
+  fusionInsight = getFusionInsight();
 
   document.getElementById('cartFees').innerHTML = `
-    <div class="cart-fee-row"><span>Subtotal</span><span>₹${subtotal()}</span></div>
+    <div class="cart-fee-row"><span>Subtotal</span><span>₹${cartSubtotal}</span></div>
     <div class="cart-fee-row"><span>Delivery (${restCount} restaurant${restCount>1?'s':''})</span><span>₹${delivery}</span></div>
     <div class="cart-fee-row"><span>Taxes & charges</span><span>₹${taxes}</span></div>
   `;
+  const fusionCard = document.getElementById('fusionCard');
+  if (fusionInsight && restCount > 1) {
+    fusionCard.style.display = 'block';
+    fusionCard.innerHTML = `
+      <div class="fusion-head">
+        <span class="fusion-title">ForkFleet Smart Fusion</span>
+        <span class="fusion-chip">One rider route</span>
+      </div>
+      <div class="fusion-line"><span>Slowest kitchen</span><strong>${fusionInsight.slowestName} (${fusionInsight.slowestMax}m)</strong></div>
+      <div class="fusion-line"><span>Sync window</span><strong>${fusionInsight.syncWindow} mins</strong></div>
+      <div class="fusion-line"><span>Estimated doorstep ETA</span><strong>${fusionInsight.fusedEta} mins</strong></div>
+      <div class="fusion-rests">${fusionInsight.restaurants.map(r => `<span class="fusion-rest">${r.emoji} ${r.name}</span>`).join('')}</div>
+    `;
+  } else {
+    fusionCard.style.display = 'none';
+    fusionCard.innerHTML = '';
+  }
   document.getElementById('cartTotal').textContent = `₹${total}`;
   document.getElementById('multiInfo').style.display = restCount > 1 ? 'block' : 'none';
   footer.style.display = 'block';
@@ -498,43 +567,413 @@ let trackInterval = null;
 let currentStep = 0;
 let restStatuses = {};
 let orderId = '';
+let fusionInsight = null;
+let prepProgress = {};
+let trackingSocket = null;
+let liveTrackingMode = false;
+let liveRouteProgress = 6;
+let liveRiderGps = null;
+let customerHome = { lat:28.6132, lng:77.2295 };
+let routeGeoPoints = [];
 
-function placeOrder() {
+function getFusionInsight() {
+  const restIds = restaurantsInCart();
+  const rests = restIds.map(id => getRestaurantById(+id)).filter(Boolean);
+  if (!rests.length) return null;
+
+  const prepTimes = rests.map(r => {
+    const match = (r.time || '').match(/(\d+)\D+(\d+)/);
+    const min = match ? Number(match[1]) : 20;
+    const max = match ? Number(match[2]) : min + 10;
+    return { name: r.name, emoji: r.emoji, min, max };
+  });
+
+  const slowest = prepTimes.reduce((a, b) => (a.max >= b.max ? a : b));
+  const fastest = prepTimes.reduce((a, b) => (a.min <= b.min ? a : b));
+  const spread = slowest.max - fastest.min;
+
+  return {
+    slowestName: slowest.name,
+    slowestMax: slowest.max,
+    syncWindow: Math.max(8, Math.round(spread * 0.6)),
+    fusedEta: slowest.max + 12,
+    restaurants: prepTimes,
+  };
+}
+
+async function syncLocalCartToBackend(accessToken) {
+  const authHeaders = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${accessToken}`,
+  };
+
+  const cartResetRes = await fetch(`${API_BASE}/cart`, {
+    method: 'DELETE',
+    headers: authHeaders,
+  });
+  const cartResetData = await cartResetRes.json();
+  if (!cartResetRes.ok || !cartResetData.success) {
+    throw new Error(cartResetData.message || cartResetData.error || 'Failed to reset server cart.');
+  }
+
+  const restRes = await fetch(`${API_BASE}/restaurants?city=Delhi&limit=50`);
+  const restData = await restRes.json();
+  if (!restRes.ok || !restData.success || !Array.isArray(restData.data?.restaurants)) {
+    throw new Error(restData.message || restData.error || 'Failed to load restaurants from backend.');
+  }
+
+  const restaurantByName = {};
+  restData.data.restaurants.forEach((r) => {
+    restaurantByName[String(r.name || '').trim().toLowerCase()] = r;
+  });
+
+  const menuCache = {};
+  const localItems = cartItems();
+  for (const item of localItems) {
+    const localRestaurant = getRestaurantById(item.restaurantId);
+    const restaurantName = String(localRestaurant?.name || '').trim().toLowerCase();
+    const backendRestaurant = restaurantByName[restaurantName];
+    if (!backendRestaurant) {
+      throw new Error(`Restaurant "${localRestaurant?.name || 'Unknown'}" not found on backend.`);
+    }
+
+    if (!menuCache[backendRestaurant.id]) {
+      const menuRes = await fetch(`${API_BASE}/restaurants/${backendRestaurant.id}/menu`);
+      const menuData = await menuRes.json();
+      if (!menuRes.ok || !menuData.success || !Array.isArray(menuData.data?.menu)) {
+        throw new Error(`Failed to load menu for ${backendRestaurant.name}.`);
+      }
+
+      const flatItems = [];
+      menuData.data.menu.forEach((cat) => {
+        (cat.items || []).forEach((mi) => flatItems.push(mi));
+      });
+      menuCache[backendRestaurant.id] = flatItems;
+    }
+
+    const matchedMenuItem = menuCache[backendRestaurant.id].find(
+      (mi) => String(mi.name || '').trim().toLowerCase() === String(item.name || '').trim().toLowerCase()
+    );
+    if (!matchedMenuItem?.id) {
+      throw new Error(`Item "${item.name}" not found in backend menu for ${backendRestaurant.name}.`);
+    }
+
+    const addRes = await fetch(`${API_BASE}/cart/items`, {
+      method: 'POST',
+      headers: authHeaders,
+      body: JSON.stringify({
+        menu_item_id: matchedMenuItem.id,
+        quantity: item.qty,
+      }),
+    });
+    const addData = await addRes.json();
+    if (!addRes.ok || !addData.success) {
+      throw new Error(addData.message || addData.error || `Failed to add "${item.name}" to backend cart.`);
+    }
+  }
+}
+
+async function placeOrder() {
   if (totalQty() === 0) return;
-  const rids = restaurantsInCart();
-  orderId = 'FF-' + Math.floor(10000 + Math.random() * 90000);
-  restStatuses = {};
-  rids.forEach(id => { restStatuses[id] = 'preparing'; });
-  currentStep = 0;
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const originalText = checkoutBtn.textContent;
+  checkoutBtn.disabled = true;
+  checkoutBtn.textContent = 'Creating order...';
 
-  document.getElementById('cartPanel').classList.add('hidden');
-  const tp = document.getElementById('trackingPanel');
-  tp.classList.add('active');
-  document.getElementById('trackOrderId').textContent = 'Order ' + orderId;
+  try {
+    const token = localStorage.getItem('ff_access_token');
+    if (!token) {
+      throw new Error('Please login first. Missing ff_access_token in localStorage.');
+    }
 
-  renderTracking();
-  showToast('Order placed! Kitchens notified.');
+    await syncLocalCartToBackend(token);
 
-  trackInterval = setInterval(() => {
-    currentStep++;
-    if (currentStep === 2) { Object.keys(restStatuses).forEach(k => restStatuses[k] = 'ready'); }
-    if (currentStep === 3) { Object.keys(restStatuses).forEach(k => restStatuses[k] = 'picked'); document.getElementById('riderCard').style.display = 'flex'; }
-    if (currentStep === 5) { Object.keys(restStatuses).forEach(k => restStatuses[k] = 'delivered'); clearInterval(trackInterval); }
-    renderTracking();
-  }, 3000);
+    const createRes = await fetch(`${API_BASE}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        instructions: 'ForkFleet multi-restaurant order',
+      }),
+    });
+    const createData = await createRes.json();
+    const createdOrderId = createData?.data?.order?.id;
+
+    if (!createRes.ok || !createData.success || !createdOrderId) {
+      throw new Error(createData.message || createData.error || 'Order creation failed.');
+    }
+
+    localStorage.setItem('ff_current_order_id', createdOrderId);
+    localStorage.setItem('ff_last_order_id', createdOrderId);
+    showToast('Order created. Redirecting to secure checkout...');
+    window.location.href = `forkfleet-payments/checkout.html?order_id=${encodeURIComponent(createdOrderId)}`;
+  } catch (err) {
+    const message = err?.message || 'Could not place your order right now.';
+    showToast(message);
+    alert(message);
+    checkoutBtn.disabled = false;
+    checkoutBtn.textContent = originalText;
+  }
+}
+
+function startLiveTracking(orderIdToTrack) {
+  const token = localStorage.getItem('ff_access_token');
+  const uuidLike = /^[0-9a-fA-F-]{20,}$/.test(orderIdToTrack || '');
+  if (!token || !uuidLike || typeof window.io !== 'function') {
+    liveTrackingMode = false;
+    return false;
+  }
+
+  try {
+    if (trackingSocket) trackingSocket.disconnect();
+
+    trackingSocket = window.io('http://localhost:4000', {
+      auth: { token },
+      transports: ['websocket', 'polling'],
+    });
+
+    trackingSocket.on('connect', () => {
+      liveTrackingMode = true;
+      trackingSocket.emit('track_order', { order_id: orderIdToTrack });
+    });
+
+    trackingSocket.on('connect_error', () => {
+      liveTrackingMode = false;
+    });
+
+    trackingSocket.on('order_update', (evt) => {
+      handleLiveOrderEvent(evt || {});
+      renderTracking();
+    });
+
+    trackingSocket.on('disconnect', () => {
+      liveTrackingMode = false;
+    });
+
+    return true;
+  } catch {
+    liveTrackingMode = false;
+    return false;
+  }
+}
+
+function handleLiveOrderEvent(evt) {
+  switch (evt.event) {
+    case 'payment_confirmed':
+      currentStep = Math.max(currentStep, 1);
+      break;
+    case 'rider_assigned':
+      document.getElementById('riderCard').style.display = 'flex';
+      currentStep = Math.max(currentStep, 2);
+      break;
+    case 'delivery_stop_updated':
+      if (evt.action === 'collected') currentStep = Math.max(currentStep, 3);
+      if (evt.action === 'dropped') {
+        currentStep = 5;
+        liveRouteProgress = 100;
+        Object.keys(restStatuses).forEach((k) => { restStatuses[k] = 'delivered'; prepProgress[k] = 100; });
+      }
+      break;
+    case 'rider_location_updated':
+      document.getElementById('riderCard').style.display = 'flex';
+      currentStep = Math.max(currentStep, 3);
+      updateLiveRouteFromGps(evt.latitude, evt.longitude);
+      break;
+    default:
+      break;
+  }
+}
+
+function updateLiveRouteFromGps(latitude, longitude) {
+  if (typeof latitude !== 'number' || typeof longitude !== 'number') return;
+  const nextPoint = { latitude, longitude };
+  if (!liveRiderGps) {
+    liveRiderGps = nextPoint;
+    liveRouteProgress = Math.max(liveRouteProgress, 36);
+    document.getElementById('riderEta').textContent = `Live GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+    return;
+  }
+
+  const meters = haversineMeters(liveRiderGps.latitude, liveRiderGps.longitude, latitude, longitude);
+  const bump = Math.min(12, Math.max(1.5, meters / 40));
+  liveRouteProgress = Math.min(96, liveRouteProgress + bump);
+  liveRiderGps = nextPoint;
+  document.getElementById('riderEta').textContent = `Live GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+}
+
+function haversineMeters(lat1, lon1, lat2, lon2) {
+  const toRad = (v) => (v * Math.PI) / 180;
+  const R = 6371000;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+    + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2))
+    * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function projectGeoPoints(points, width, height, pad = 14) {
+  if (!points.length) return [];
+  const lats = points.map((p) => p.lat);
+  const lngs = points.map((p) => p.lng);
+  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+  const latSpan = Math.max(0.0008, maxLat - minLat);
+  const lngSpan = Math.max(0.0008, maxLng - minLng);
+  const innerW = width - pad * 2;
+  const innerH = height - pad * 2;
+
+  return points.map((p) => ({
+    ...p,
+    x: pad + ((p.lng - minLng) / lngSpan) * innerW,
+    y: pad + ((maxLat - p.lat) / latSpan) * innerH,
+  }));
+}
+
+function pathLength(points) {
+  if (points.length < 2) return 0;
+  let total = 0;
+  for (let i = 1; i < points.length; i++) {
+    total += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
+  }
+  return total;
+}
+
+function getPointAlongPath(points, ratio) {
+  if (points.length === 0) return { x: 14, y: 34 };
+  if (points.length === 1) return { x: points[0].x, y: points[0].y };
+  const clamped = Math.max(0, Math.min(1, ratio));
+  const total = pathLength(points);
+  if (total <= 0) return { x: points[0].x, y: points[0].y };
+  let target = total * clamped;
+
+  for (let i = 1; i < points.length; i++) {
+    const seg = Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
+    if (target <= seg) {
+      const t = seg === 0 ? 0 : target / seg;
+      return {
+        x: points[i - 1].x + (points[i].x - points[i - 1].x) * t,
+        y: points[i - 1].y + (points[i].y - points[i - 1].y) * t,
+      };
+    }
+    target -= seg;
+  }
+  const last = points[points.length - 1];
+  return { x: last.x, y: last.y };
 }
 
 function renderTracking() {
-  // Restaurant status rows
+  const delayCard = document.getElementById('delayCard');
+  if (currentStep === 1 && Object.keys(restStatuses).length > 1) {
+    const slow = fusionInsight?.slowestName || 'one kitchen';
+    delayCard.className = 'delay-card show';
+    delayCard.innerHTML = `
+      <div class="delay-head">
+        <span class="delay-title">Smart Delay Watch</span>
+        <span class="delay-chip watch">monitoring</span>
+      </div>
+      <div class="delay-msg">${slow} is pacing your order. ForkFleet is syncing rider dispatch so your whole order still arrives together.</div>
+    `;
+  } else if (currentStep >= 3 && Object.keys(restStatuses).length > 1) {
+    delayCard.className = 'delay-card show';
+    delayCard.innerHTML = `
+      <div class="delay-head">
+        <span class="delay-title">Recovery Applied</span>
+        <span class="delay-chip recovered">stabilized</span>
+      </div>
+      <div class="delay-msg">All pickups are aligned. Your rider route was adjusted to avoid split drop-offs and keep delivery consolidated.</div>
+    `;
+  } else {
+    delayCard.className = 'delay-card';
+    delayCard.innerHTML = '';
+  }
+
+  const routePreview = document.getElementById('routePreview');
   const rids = Object.keys(restStatuses);
+  const stops = routeGeoPoints.length
+    ? routeGeoPoints
+    : rids.map((rid) => {
+        const rest = getRestaurantById(+rid);
+        return { label: rest ? rest.name.split(' ')[0] : 'Kitchen', icon: rest ? rest.emoji : '🍽️', lat: 28.61, lng: 77.22 };
+      }).concat([{ label: 'You', icon: '🏠', lat: customerHome.lat, lng: customerHome.lng }]);
+  const stopCount = Math.max(2, stops.length);
+  let activeStopIndex = 0;
+  if (currentStep >= 2) activeStopIndex = Math.min(stops.length - 2, Math.max(0, currentStep - 2));
+  if (currentStep >= 4) activeStopIndex = stops.length - 1;
+
+  const segment = 100 / (stopCount - 1);
+  let lineProgress = activeStopIndex * segment + (currentStep >= 2 ? segment * 0.42 : 0);
+  if (liveTrackingMode) lineProgress = Math.max(lineProgress, liveRouteProgress);
+  if (currentStep === 5) lineProgress = 100;
+  if (currentStep < 5) lineProgress = Math.min(95, lineProgress);
+  lineProgress = Math.max(6, lineProgress);
+  const projectedStops = projectGeoPoints(stops, 324, 70, 14);
+  const riderRatio = lineProgress / 100;
+  const fallbackRiderPoint = getPointAlongPath(projectedStops, riderRatio);
+  const riderProjected = (liveTrackingMode && liveRiderGps)
+    ? projectGeoPoints([{ lat: liveRiderGps.latitude, lng: liveRiderGps.longitude }].concat(stops), 324, 70, 14)[0]
+    : fallbackRiderPoint;
+  const polylinePoints = projectedStops.map((p) => `${p.x},${p.y}`).join(' ');
+  const travelledPoints = projectedStops
+    .filter((_, idx) => idx <= Math.max(0, activeStopIndex))
+    .map((p) => `${p.x},${p.y}`)
+    .concat([`${riderProjected.x},${riderProjected.y}`])
+    .join(' ');
+
+  const nextStop = currentStep >= 4 ? 'Your doorstep' : `${stops[Math.min(activeStopIndex + 1, stops.length - 1)].label}`;
+  routePreview.innerHTML = `
+    <div class="route-head">
+      <span class="route-title">Live Route Preview</span>
+      <span class="route-chip">Real-time</span>
+    </div>
+    <div class="route-sub">Next stop: ${nextStop}</div>
+    <div class="map-canvas">
+      <svg width="100%" height="70" viewBox="0 0 324 70" style="position:absolute;inset:0">
+        <polyline points="${polylinePoints}" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        <polyline points="${travelledPoints}" fill="none" stroke="url(#ffRouteGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        <defs>
+          <linearGradient id="ffRouteGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#3a7fd4"></stop>
+            <stop offset="100%" stop-color="#7ab2f7"></stop>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="map-rider" style="left:${riderProjected.x}px;top:${Math.max(8, riderProjected.y - 14)}px">🛵</div>
+      ${stops.map((s, idx) => {
+        const p = projectedStops[idx];
+        const done = idx < activeStopIndex || (currentStep === 5 && idx === stops.length - 1);
+        const active = idx === activeStopIndex && currentStep < 5;
+        const finalCls = idx === stops.length - 1 ? ' final' : '';
+        return `
+          <div class="map-stop${done ? ' done' : ''}${active ? ' active' : ''}${finalCls}" style="left:${p.x}px;top:${p.y - 6}px"></div>
+          <div class="map-label" style="left:${p.x}px;top:${Math.min(62, p.y + 9)}px">${s.icon} ${s.label}</div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  // Restaurant status rows
   document.getElementById('trackRests').innerHTML = rids.map(rid => {
     const r = getRestaurantById(+rid);
     const s = restStatuses[rid];
     const label = s === 'preparing' ? 'Preparing' : s === 'ready' ? 'Ready' : s === 'picked' ? 'Picked up' : 'Delivered';
     const cls = s === 'preparing' ? 's-preparing' : s === 'ready' ? 's-ready' : s === 'picked' ? 's-picked' : 's-delivered';
+    const fillClass = s === 'preparing' ? 'preparing' : s === 'ready' ? 'ready' : s === 'picked' ? 'picked' : 'delivered';
+    const pct = Math.max(6, Math.min(100, prepProgress[rid] || 0));
     return `<div class="track-rest-row">
-      <span style="display:flex;align-items:center;gap:8px">${r.emoji} <span class="track-rest-name">${r.name}</span></span>
-      <span class="track-status-badge ${cls}">${label}</span>
+      <div style="width:100%">
+        <div class="track-rest-main">
+          <span class="track-rest-left">${r.emoji} <span class="track-rest-name">${r.name}</span></span>
+          <span class="track-status-badge ${cls}">${label}</span>
+        </div>
+        <div class="prep-progress">
+          <div class="prep-head"><span>Kitchen progress</span><span>${pct}%</span></div>
+          <div class="prep-bar"><div class="prep-fill ${fillClass}" style="width:${pct}%"></div></div>
+        </div>
+      </div>
     </div>`;
   }).join('');
 
@@ -557,16 +996,24 @@ function renderTracking() {
   }).join('');
 
   // Rider ETA
-  const etas = ['On the way to restaurants', 'Picking up your food', 'Almost there — 8 min away', 'Delivered!'];
+  const syncEta = fusionInsight?.fusedEta ? `Arrives in ~${fusionInsight.fusedEta} mins` : 'On the way to restaurants';
+  const etas = [syncEta, 'Picking up your food', 'Almost there — 8 min away', 'Delivered!'];
   const etaIdx = Math.max(0, Math.min(currentStep - 2, etas.length - 1));
   document.getElementById('riderEta').textContent = etas[etaIdx];
 }
 
 function newOrder() {
   clearInterval(trackInterval);
+  if (trackingSocket) {
+    trackingSocket.disconnect();
+    trackingSocket = null;
+  }
   cart = {};
   expanded = {1:true};
   currentStep = 0;
+  liveTrackingMode = false;
+  liveRouteProgress = 6;
+  liveRiderGps = null;
   document.getElementById('trackingPanel').classList.remove('active');
   document.getElementById('cartPanel').classList.remove('hidden');
   document.getElementById('riderCard').style.display = 'none';

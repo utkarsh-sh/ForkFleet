@@ -77,6 +77,7 @@ CREATE TABLE restaurants (
   longitude        DECIMAL(11,8) NOT NULL,
   phone            VARCHAR(15) NOT NULL,
   email            VARCHAR(255),
+  razorpay_account_id VARCHAR(100),
   image_url        VARCHAR(500),
   avg_rating       DECIMAL(3,2) NOT NULL DEFAULT 0.00,
   total_ratings    INTEGER NOT NULL DEFAULT 0,
@@ -220,9 +221,20 @@ CREATE TABLE restaurant_payouts (
   commission_pct  DECIMAL(5,2) NOT NULL DEFAULT 15.00,
   commission_amt  INTEGER NOT NULL,
   net_amount      INTEGER NOT NULL,
+  razorpay_transfer_id VARCHAR(100) UNIQUE,
   status          payout_status NOT NULL DEFAULT 'pending',
   settled_at      TIMESTAMPTZ,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Payment webhook event idempotency tracker
+CREATE TABLE webhook_events (
+  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  razorpay_event_id VARCHAR(120) UNIQUE NOT NULL,
+  event_type        VARCHAR(80) NOT NULL,
+  payload           JSONB NOT NULL DEFAULT '{}',
+  status            VARCHAR(30) NOT NULL DEFAULT 'processed',
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- ── DELIVERY ─────────────────────────────────────────────────────────────────

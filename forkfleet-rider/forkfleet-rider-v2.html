@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#12110f"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>ForkFleet Rider</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#12110f;--bg2:#1a1916;--bg3:#232119;--bg4:#2d2b27;
+  --surface:#1e1c19;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#f2ede6;--text2:#8c887f;--text3:#4a4742;
+  --orange:#e8522a;--orange2:#f07040;--os:rgba(232,82,42,0.15);
+  --green:#2ecc71;--gs:rgba(46,204,113,0.12);
+  --amber:#f0a020;--as:rgba(240,160,32,0.12);
+  --blue:#4090e0;--bs:rgba(64,144,224,0.12);
+  --red:#e05050;--rs:rgba(224,80,80,0.12);
+  --r:14px;--r-sm:9px;--r-xs:5px;
+  --font-d:'Fraunces',serif;--font-b:'DM Sans',sans-serif;--font-m:'DM Mono',monospace;
+  --sb:env(safe-area-inset-bottom,16px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:var(--font-b);color:var(--text);font-size:15px}
+button{font-family:var(--font-b);cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:var(--font-b)}
+::-webkit-scrollbar{display:none}
+
+/* ── LOGIN ────────────────────────────────── */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.login-hero{text-align:center;margin-bottom:32px}
+.login-logo{font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--text)}
+.login-logo span{color:var(--orange)}
+.login-logo sub{font-size:13px;font-weight:400;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-left:6px}
+.login-tagline{font-size:14px;color:var(--text3);margin-top:8px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px 24px;width:100%;max-width:360px}
+.lc-title{font-family:var(--font-d);font-size:18px;font-weight:600;margin-bottom:20px;color:var(--text)}
+.form-row{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.form-lbl{font-size:12px;font-weight:500;color:var(--text2)}
+.form-inp{background:var(--bg3);border:1.5px solid transparent;border-radius:var(--r-sm);padding:11px 14px;font-size:14px;color:var(--text);outline:none;transition:all 0.15s;width:100%}
+.form-inp:focus{border-color:var(--orange);background:var(--bg2)}
+.form-inp::placeholder{color:var(--text3)}
+.login-btn-main{width:100%;background:var(--orange);color:#fff;border-radius:var(--r-sm);padding:14px;font-family:var(--font-d);font-size:16px;font-weight:600;letter-spacing:0.2px;transition:all 0.15s;margin-top:6px}
+.login-btn-main:hover{background:var(--orange2)}
+.login-err{background:var(--rs);color:var(--red);border-radius:var(--r-xs);padding:8px 12px;font-size:13px;display:none;margin-bottom:10px}
+.login-demo{font-size:11px;color:var(--text3);text-align:center;margin-top:14px;line-height:1.7;background:var(--bg3);border-radius:var(--r-xs);padding:10px}
+.login-demo strong{color:var(--text2);font-family:var(--font-m)}
+
+/* ── APP SHELL ────────────────────────────── */
+#appShell{height:100%;display:flex;flex-direction:column;display:none}
+
+/* ── STATUS BAR ───────────────────────────── */
+.status-bar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;background:var(--bg)}
+.sb-time{font-family:var(--font-m);font-size:13px;font-weight:500}
+.sb-user{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.sb-avatar{width:22px;height:22px;border-radius:50%;background:var(--os);color:var(--orange);font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center}
+
+/* ── SCREENS ──────────────────────────────── */
+.screen{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;opacity:0;transform:translateX(8px);pointer-events:none;transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
+.screen.active{opacity:1;transform:none;pointer-events:all}
+
+/* ── BOTTOM NAV ───────────────────────────── */
+.bnav{height:calc(62px + var(--sb));background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-around;padding-top:10px;flex-shrink:0;z-index:20;position:relative}
+.bt{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 18px;font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text3);transition:color 0.15s;min-width:56px}
+.bt svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bt.active{color:var(--orange)}
+.bt-live-dot{position:absolute;top:8px;width:5px;height:5px;border-radius:50%;background:var(--orange)}
+
+/* ── ONLINE BAR ───────────────────────────── */
+.online-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ob-info{display:flex;flex-direction:column;gap:2px}
+.ob-lbl{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:0.3px}
+.ob-status{font-family:var(--font-d);font-size:18px;font-weight:700}
+.ob-status.on{color:var(--green)}
+.ob-status.off{color:var(--text2)}
+.big-tog{width:56px;height:30px;border-radius:15px;background:var(--bg4);position:relative;cursor:pointer;transition:background 0.25s;border:1px solid var(--border2)}
+.big-tog.on{background:var(--green)}
+.big-tog-thumb{width:24px;height:24px;border-radius:12px;background:#fff;position:absolute;top:2px;left:2px;transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.big-tog.on .big-tog-thumb{transform:translateX(26px)}
+
+/* ── HOME SCREEN ──────────────────────────── */
+.earnings-card{margin:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;justify-content:space-between}
+.ec-left{display:flex;flex-direction:column;gap:3px}
+.ec-lbl{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)}
+.ec-val{font-family:var(--font-d);font-size:34px;font-weight:700;letter-spacing:-1px;color:var(--text);line-height:1}
+.ec-stats{display:flex;gap:16px}
+.ec-stat{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.ec-sv{font-family:var(--font-m);font-size:16px;color:var(--text)}
+.ec-sl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
+
+/* ── JOB CARD ────────────────────────────── */
+.job-card{margin:0 16px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all 0.2s}
+.job-card.incoming{border-color:rgba(232,82,42,0.45);animation:jglow 2s infinite}
+@keyframes jglow{0%,100%{box-shadow:0 0 0 0 rgba(232,82,42,0.15)}60%{box-shadow:0 0 0 8px rgba(232,82,42,0)}}
+.jc-head{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.jc-id{font-family:var(--font-m);font-size:11px;color:var(--text3)}
+.jc-earn{font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--green)}
+.jc-stops{padding:14px 16px;display:flex;flex-direction:column;gap:0}
+.stop{display:flex;align-items:flex-start;gap:12px;position:relative}
+.stop:not(:last-child)::after{content:'';position:absolute;left:11px;top:26px;width:1px;height:calc(100% + 2px);background:var(--border2);z-index:0}
+.stop-dot{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;z-index:1;margin-top:2px}
+.stop-dot.p{background:var(--as);color:var(--amber);border:1.5px solid var(--amber)}
+.stop-dot.d{background:var(--gs);color:var(--green);border:1.5px solid var(--green)}
+.stop-body{flex:1;padding-bottom:14px}
+.stop-type{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:2px}
+.stop-name{font-size:14px;font-weight:600;color:var(--text)}
+.stop-addr{font-size:12px;color:var(--text2);margin-top:1px}
+.stop-dist{font-family:var(--font-m);font-size:11px;color:var(--orange);margin-top:3px}
+.jc-actions{padding:12px 16px;display:flex;gap:10px;border-top:1px solid var(--border)}
+.btn-accept{flex:1;background:var(--orange);color:#fff;border-radius:var(--r-sm);padding:13px;font-family:var(--font-d);font-size:15px;font-weight:700;transition:all 0.15s}
+.btn-accept:hover{background:var(--orange2)}
+.btn-decline{background:var(--bg3);color:var(--text2);border-radius:var(--r-sm);padding:13px 18px;font-size:14px;font-weight:500;transition:all 0.15s;border:1px solid var(--border)}
+.btn-decline:hover{background:var(--bg4);color:var(--text)}
+.no-jobs{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px 24px;text-align:center}
+.nj-icon{font-size:48px;opacity:0.18}
+.nj-title{font-family:var(--font-d);font-size:18px;font-weight:600;color:var(--text2)}
+.nj-sub{font-size:13px;color:var(--text3)}
+
+/* ── DELIVERY SCREEN ──────────────────────── */
+.dlv-header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
+.dlv-left{flex:1}
+.dlv-sub{font-family:var(--font-m);font-size:11px;color:var(--text3)}
+.dlv-title{font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text);margin-top:2px;letter-spacing:-0.3px}
+.dlv-earn{font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--green)}
+.map-area{background:var(--bg2);height:230px;flex-shrink:0;position:relative;overflow:hidden}
+.map-canvas{width:100%;height:100%}
+.map-eta{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:var(--bg);border:1px solid var(--border2);border-radius:20px;padding:7px 18px;display:flex;align-items:center;gap:8px}
+.eta-lbl{font-size:12px;color:var(--text2)}
+.eta-val{font-family:var(--font-m);font-size:15px;font-weight:500}
+.eta-unit{font-size:12px;color:var(--text3)}
+.stops-tabs{border-top:1px solid var(--border);display:flex;flex-shrink:0}
+.stab{flex:1;padding:11px;text-align:center;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;position:relative;transition:color 0.15s}
+.stab.active{color:var(--orange)}
+.stab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--orange);border-radius:1px 1px 0 0}
+.stab.done{color:var(--green)}
+.stab.done::after{background:var(--green)}
+.curr-stop{padding:16px 20px;overflow-y:auto;flex:1}
+.cs-badge{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px}
+.cs-badge.p{background:var(--as);color:var(--amber)}
+.cs-badge.d{background:var(--gs);color:var(--green)}
+.cs-name{font-family:var(--font-d);font-size:21px;font-weight:700;color:var(--text);letter-spacing:-0.5px}
+.cs-addr{font-size:13px;color:var(--text2);margin-top:4px;line-height:1.4}
+.cs-phone{font-size:13px;color:var(--text2);margin-top:8px;display:flex;align-items:center;gap:6px}
+.cs-actions{display:flex;gap:10px;margin-top:14px}
+.btn-nav{flex:1;background:var(--blue);color:#fff;border-radius:var(--r-sm);padding:11px;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity 0.15s}
+.btn-call{background:var(--bg3);color:var(--text);border-radius:var(--r-sm);padding:11px 16px;font-size:14px;border:1px solid var(--border2);transition:all 0.15s}
+.big-action-btn{width:calc(100% - 40px);margin:0 20px 16px;background:var(--orange);color:#fff;border-radius:var(--r-sm);padding:14px;font-family:var(--font-d);font-size:16px;font-weight:700;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0}
+.big-action-btn:hover{background:var(--orange2)}
+.big-action-btn.g{background:var(--green)}
+.big-action-btn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed}
+.items-sect{background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.items-sect-lbl{padding:12px 20px 6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3)}
+.check-items{padding:0 20px 8px;display:flex;flex-direction:column;gap:6px}
+.ci-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+.ci-row:last-child{border-bottom:none}
+.ci-check{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border2);background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.12s;font-size:11px;color:transparent}
+.ci-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.ci-name{flex:1;font-size:13px;color:var(--text)}
+.ci-qty{font-family:var(--font-m);font-size:11px;color:var(--text3)}
+.otp-sect{background:var(--bg2);border-top:1px solid var(--border);padding:20px;flex-shrink:0}
+.otp-title{font-family:var(--font-d);font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px}
+.otp-sub{font-size:13px;color:var(--text2);margin-bottom:14px}
+.otp-row{display:flex;gap:10px;justify-content:center;margin-bottom:10px}
+.otp-d{width:50px;height:56px;border-radius:var(--r-sm);background:var(--bg3);border:1.5px solid var(--border2);font-family:var(--font-m);font-size:22px;color:var(--text);text-align:center;outline:none;transition:border-color 0.15s}
+.otp-d:focus{border-color:var(--orange)}
+.otp-hint{font-size:12px;color:var(--text3);text-align:center;margin-bottom:12px}
+.otp-confirm{width:100%;background:var(--orange);color:#fff;border-radius:var(--r-sm);padding:14px;font-family:var(--font-d);font-size:15px;font-weight:700;transition:all 0.15s}
+.otp-confirm:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed}
+
+/* ── COMPLETE ─────────────────────────────── */
+.complete-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;gap:14px}
+.cw-icon{width:72px;height:72px;border-radius:50%;background:var(--gs);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:32px;animation:pop 0.5s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.cw-title{font-family:var(--font-d);font-size:28px;font-weight:700;letter-spacing:-0.5px}
+.cw-earn{font-family:var(--font-d);font-size:44px;font-weight:800;letter-spacing:-2px;color:var(--green)}
+.cw-earn-lbl{font-size:13px;color:var(--text3)}
+.cw-stats{display:flex;gap:24px}
+.cws{display:flex;flex-direction:column;align-items:center;gap:3px}
+.cws-v{font-family:var(--font-m);font-size:18px;color:var(--text)}
+.cws-l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
+.done-btn{background:var(--bg2);color:var(--text);border:1px solid var(--border2);border-radius:var(--r-sm);padding:13px 28px;font-family:var(--font-d);font-size:15px;font-weight:600;margin-top:8px;transition:all 0.15s}
+
+/* ── EARNINGS SCREEN ──────────────────────── */
+.earn-screen{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1}
+.earn-today-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.etc-lbl{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.etc-val{font-family:var(--font-d);font-size:42px;font-weight:800;letter-spacing:-2px;color:var(--text);line-height:1}
+.etc-sub{font-size:13px;color:var(--text3);margin-top:6px}
+.earn-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.et{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px}
+.et-v{font-family:var(--font-m);font-size:20px;font-weight:500}
+.et-l{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px}
+.trips-list{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.trip-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.trip-row:last-child{border-bottom:none}
+.tr-id{font-family:var(--font-m);font-size:12px;color:var(--text2)}
+.tr-stops{font-size:11px;color:var(--text3);margin-top:2px}
+.tr-earn{font-family:var(--font-m);font-size:14px;color:var(--green);font-weight:500}
+.tr-time{font-size:11px;color:var(--text3);margin-top:2px;text-align:right}
+
+/* ── PROFILE SCREEN ───────────────────────── */
+.profile-screen{padding:0 16px 32px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1}
+.profile-hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:flex;align-items:center;gap:16px}
+.ph-avatar{width:58px;height:58px;border-radius:50%;background:var(--os);color:var(--orange);font-family:var(--font-d);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid rgba(232,82,42,0.25)}
+.ph-name{font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text)}
+.ph-phone{font-size:13px;color:var(--text3);margin-top:2px}
+.ph-rating{font-size:13px;color:var(--amber);margin-top:4px}
+.settings-grp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.sg-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.sg-row:last-child{border-bottom:none}
+.sg-row:active{background:var(--bg3)}
+.sg-lbl{font-size:14px;color:var(--text)}
+.sg-val{font-size:13px;color:var(--text3)}
+.sg-val.g{color:var(--green)}
+.sg-badge{background:var(--gs);color:var(--green);font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+
+/* ── TOAST ───────────────────────────────── */
+.toast-wrap{position:fixed;top:56px;left:0;right:0;z-index:100;padding:0 16px;pointer-events:none;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-sm);padding:11px 14px;display:flex;align-items:center;gap:9px;pointer-events:all;transform:translateY(-16px);opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);font-size:13px;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.toast.show{transform:none;opacity:1}
+.toast-bar{width:3px;height:28px;border-radius:2px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ──────────────────────────────── -->
+<div id="loginScreen">
+  <div class="login-hero">
+    <div class="login-logo">fork<span>fleet</span><sub>rider</sub></div>
+    <div class="login-tagline">Your delivery partner dashboard</div>
+  </div>
+  <div class="login-card">
+    <div class="lc-title">Sign in as a rider</div>
+    <div id="loginErr" class="login-err"></div>
+    <div class="form-row">
+      <label class="form-lbl">Phone number</label>
+      <input class="form-inp" id="lPhone" type="tel" placeholder="+91 98765 43210"/>
+    </div>
+    <div class="form-row">
+      <label class="form-lbl">Password</label>
+      <input class="form-inp" id="lPass" type="password" placeholder="Your password"/>
+    </div>
+    <button class="login-btn-main" onclick="doLogin()">Start riding →</button>
+    <div class="login-demo">Demo credentials<br/><strong>+919876543210</strong> · <strong>rider1234</strong><br/><span style="opacity:0.7">Or use any 10-digit number + 8 char pass</span></div>
+  </div>
+</div>
+
+<!-- ── APP ────────────────────────────────── -->
+<div id="appShell">
+  <div class="status-bar">
+    <span class="sb-time" id="clockEl">10:42</span>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">RK</div>
+      <span id="sbName">Rider</span>
+    </div>
+  </div>
+
+  <!-- SCREENS container -->
+  <div style="position:relative;flex:1;overflow:hidden">
+
+    <!-- HOME -->
+    <div class="screen active" id="sc-home" style="overflow-y:auto">
+      <div class="online-bar">
+        <div class="ob-info">
+          <span class="ob-lbl">Status</span>
+          <span class="ob-status off" id="obStatus">Offline</span>
+        </div>
+        <div class="big-tog" id="bigTog" onclick="toggleOnline()">
+          <div class="big-tog-thumb"></div>
+        </div>
+      </div>
+      <div class="earnings-card">
+        <div class="ec-left">
+          <span class="ec-lbl">Today's earnings</span>
+          <span class="ec-val" id="todayEarn">₹0</span>
+        </div>
+        <div class="ec-stats">
+          <div class="ec-stat"><span class="ec-sv" id="tripCnt">0</span><span class="ec-sl">Trips</span></div>
+          <div class="ec-stat"><span class="ec-sv" id="kmCnt">0</span><span class="ec-sl">km</span></div>
+          <div class="ec-stat"><span class="ec-sv" id="onlineHr">0h</span><span class="ec-sl">Online</span></div>
+        </div>
+      </div>
+      <div id="homeBody">
+        <div class="no-jobs"><div class="nj-icon">🛵</div><div class="nj-title">Go online to start</div><div class="nj-sub">Toggle the switch to receive deliveries</div></div>
+      </div>
+    </div>
+
+    <!-- DELIVERY -->
+    <div class="screen" id="sc-delivery" style="overflow-y:auto">
+      <div class="dlv-header">
+        <div class="dlv-left">
+          <div class="dlv-sub" id="dlvSub">FF-20481</div>
+          <div class="dlv-title" id="dlvTitle">Pickup · Stop 1 of 3</div>
+        </div>
+        <div class="dlv-earn" id="dlvEarn">₹85</div>
+      </div>
+      <div class="map-area" style="height:220px;flex-shrink:0">
+        <canvas class="map-canvas" id="mapCvs"></canvas>
+        <div class="map-eta">
+          <span class="eta-lbl">ETA</span>
+          <span class="eta-val" id="etaVal">8</span>
+          <span class="eta-unit">min</span>
+        </div>
+      </div>
+      <div class="stops-tabs" id="stopsTabs"></div>
+      <div class="curr-stop" id="currStop"></div>
+      <div class="big-action-btn" id="arrivedBtn" onclick="handleArrived()">I've arrived</div>
+      <div id="itemsSect" style="display:none" class="items-sect">
+        <div class="items-sect-lbl">Confirm items collected</div>
+        <div class="check-items" id="checkItems"></div>
+        <div class="big-action-btn g" id="collectedBtn" onclick="markCollected()" style="opacity:0.4;pointer-events:none">✓ All collected — next stop</div>
+      </div>
+      <div id="otpSect" style="display:none" class="otp-sect">
+        <div class="otp-title">Confirm delivery</div>
+        <div class="otp-sub">Ask customer for their 4-digit OTP</div>
+        <div class="otp-row">
+          <input class="otp-d" maxlength="1" type="tel" id="o0" oninput="oi(0)" onkeydown="ob(event,0)"/>
+          <input class="otp-d" maxlength="1" type="tel" id="o1" oninput="oi(1)" onkeydown="ob(event,1)"/>
+          <input class="otp-d" maxlength="1" type="tel" id="o2" oninput="oi(2)" onkeydown="ob(event,2)"/>
+          <input class="otp-d" maxlength="1" type="tel" id="o3" oninput="oi(3)" onkeydown="ob(event,3)"/>
+        </div>
+        <div class="otp-hint">Demo OTP: <strong style="color:var(--amber);font-family:var(--font-m)">2847</strong></div>
+        <button class="otp-confirm" id="otpBtn" onclick="confirmOtp()" disabled>Confirm delivery</button>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="screen" id="sc-complete">
+      <div class="complete-wrap">
+        <div class="cw-icon">✓</div>
+        <div class="cw-title">Delivered!</div>
+        <div class="cw-earn" id="cwEarn">₹85</div>
+        <div class="cw-earn-lbl">earned this trip</div>
+        <div class="cw-stats">
+          <div class="cws"><span class="cws-v" id="cwDist">4.2km</span><span class="cws-l">Distance</span></div>
+          <div class="cws"><span class="cws-v" id="cwTime">28min</span><span class="cws-l">Duration</span></div>
+          <div class="cws"><span class="cws-v" id="cwStops">3</span><span class="cws-l">Stops</span></div>
+        </div>
+        <button class="done-btn" onclick="returnHome()">Back to home</button>
+      </div>
+    </div>
+
+    <!-- EARNINGS -->
+    <div class="screen" id="sc-earnings" style="overflow:visible">
+      <div class="status-bar" style="flex-shrink:0"><span style="font-family:var(--font-d);font-size:16px;font-weight:700">Earnings</span></div>
+      <div class="earn-screen" id="earnScreen">
+        <div class="earn-today-card">
+          <div class="etc-lbl">Total earnings</div>
+          <div class="etc-val" id="earnBig">₹485</div>
+          <div class="etc-sub" id="earnSub">6 trips · 38 km · 5h 20m online</div>
+        </div>
+        <div class="earn-tiles">
+          <div class="et"><div class="et-v">₹3,240</div><div class="et-l">This week</div></div>
+          <div class="et"><div class="et-v">₹12,800</div><div class="et-l">This month</div></div>
+          <div class="et"><div class="et-v">42</div><div class="et-l">Trips this week</div></div>
+          <div class="et"><div class="et-v">4.9 ★</div><div class="et-l">Your rating</div></div>
+        </div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3)">Recent trips</div>
+        <div class="trips-list" id="tripList"></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="screen" id="sc-profile" style="overflow:visible">
+      <div class="status-bar" style="flex-shrink:0"><span style="font-family:var(--font-d);font-size:16px;font-weight:700">Profile</span></div>
+      <div class="profile-screen">
+        <div class="profile-hero">
+          <div class="ph-avatar" id="profAvatar">RK</div>
+          <div>
+            <div class="ph-name" id="profName">Rajesh Kumar</div>
+            <div class="ph-phone" id="profPhone">+91 98765 43210</div>
+            <div class="ph-rating">★ 4.9 <span style="color:var(--text3);font-size:12px">(312 ratings)</span></div>
+          </div>
+        </div>
+        <div class="settings-grp">
+          <div class="sg-row"><span class="sg-lbl">Status</span><span class="sg-badge" id="profStatus">Offline</span></div>
+          <div class="sg-row"><span class="sg-lbl">Vehicle</span><span class="sg-val">Honda Activa · DL5S 1234</span></div>
+          <div class="sg-row"><span class="sg-lbl">Documents</span><span class="sg-val g">All verified ✓</span></div>
+        </div>
+        <div class="settings-grp">
+          <div class="sg-row"><span class="sg-lbl">Bank account</span><span class="sg-val">HDFC ···4521</span></div>
+          <div class="sg-row"><span class="sg-lbl">UPI ID</span><span class="sg-val" id="profUpi">rider@upi</span></div>
+          <div class="sg-row"><span class="sg-lbl">Payout</span><span class="sg-val">Weekly</span></div>
+        </div>
+        <div class="settings-grp">
+          <div class="sg-row" onclick="toast('Support coming soon','var(--blue)')"><span class="sg-lbl">Support</span><span class="sg-val">›</span></div>
+          <div class="sg-row" onclick="doLogout()"><span class="sg-lbl" style="color:var(--red)">Sign out</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <button class="bt active" id="bt-home" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="bt" id="bt-delivery" style="display:none">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Active
+      <div class="bt-live-dot"></div>
+    </button>
+    <button class="bt" id="bt-earnings" onclick="switchTab('earnings')">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Earnings
+    </button>
+    <button class="bt" id="bt-profile" onclick="switchTab('profile')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ── RIDERS ────────────────────────────────────────────────────────────────────
+
+const RIDERS = [
+  { phone:'+919876543210', password:'rider1234', name:'Rajesh Kumar', initials:'RK', rating:'4.9', upi:'rajesh@upi' },
+  { phone:'+919876543211', password:'rider1234', name:'Suresh Yadav', initials:'SY', rating:'4.7', upi:'suresh@upi' },
+];
+
+let currentRider = JSON.parse(sessionStorage.getItem('ff_rider') || 'null');
+
+function doLogin() {
+  const phone = document.getElementById('lPhone').value.trim();
+  const pass  = document.getElementById('lPass').value;
+  let rider = RIDERS.find(r => (r.phone === phone || r.phone === '+91'+phone.replace(/\D/g,'').slice(-10)) && r.password === pass);
+  if (!rider && phone.replace(/\D/g,'').length >= 10 && pass.length >= 8) {
+    rider = { phone, password: pass, name: 'Rider '+ phone.slice(-4), initials: 'RD', rating: '4.8', upi: 'rider@upi' };
+  }
+  if (!rider) {
+    const err = document.getElementById('loginErr');
+    err.textContent = 'Invalid credentials. Try +919876543210 / rider1234';
+    err.style.display = 'block';
+    return;
+  }
+  sessionStorage.setItem('ff_rider', JSON.stringify(rider));
+  currentRider = rider;
+  initApp(rider);
+}
+
+function initApp(rider) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'flex';
+  document.getElementById('appShell').style.flexDirection = 'column';
+  document.getElementById('appShell').style.height = '100%';
+  document.getElementById('sbAvatar').textContent = rider.initials;
+  document.getElementById('sbName').textContent = rider.name.split(' ')[0];
+  document.getElementById('profAvatar').textContent = rider.initials;
+  document.getElementById('profName').textContent = rider.name;
+  document.getElementById('profPhone').textContent = rider.phone;
+  document.getElementById('profUpi').textContent = rider.upi;
+  renderTripList(); updateClock();
+}
+
+function doLogout() {
+  if (confirm('Sign out?')) { sessionStorage.removeItem('ff_rider'); location.reload(); }
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+
+let isOnline=false, activeJob=null, curStop=0, stopState='nav';
+let todayEarnings=0, trips=0, kmToday=0, onlineMins=0;
+let recentTrips=[], mapAF=null, mapPhase=0, etaS=480;
+
+const JOBS = [
+  { id:'FF-20481', earn:85, stops:[
+    {type:'p',name:'Bukhara Tandoor',addr:'12 Connaught Place',phone:'+91 11 0000 0001',dist:'1.2 km',items:[{n:'Butter Chicken',q:2},{n:'Garlic Naan',q:3}]},
+    {type:'p',name:'Dragon Palace',addr:'45 Hauz Khas Village',phone:'+91 11 0000 0002',dist:'2.1 km',items:[{n:'Veg Fried Rice',q:1}]},
+    {type:'d',name:'Arjun Mehta',addr:'B-14 Lajpat Nagar II',phone:'+91 98765 43210',dist:'3.4 km',items:[]},
+  ]},
+  { id:'FF-20477', earn:60, stops:[
+    {type:'p',name:'Pizza Rustica',addr:'7 Khan Market',phone:'+91 11 0000 0003',dist:'0.8 km',items:[{n:'Margherita',q:1},{n:'Garlic Breadsticks',q:1}]},
+    {type:'d',name:'Priya Sharma',addr:'C-22 Defence Colony',phone:'+91 97654 32109',dist:'2.2 km',items:[]},
+  ]},
+];
+
+const PAST=[
+  {id:'FF-20470',time:'2:14 PM',earn:72,stops:3,km:4.2},
+  {id:'FF-20465',time:'1:40 PM',earn:55,stops:2,km:3.1},
+  {id:'FF-20459',time:'12:58 PM',earn:90,stops:3,km:5.8},
+  {id:'FF-20451',time:'12:20 PM',earn:68,stops:2,km:3.6},
+  {id:'FF-20442',time:'11:48 AM',earn:85,stops:3,km:4.9},
+];
+
+// ── CLOCK ─────────────────────────────────────────────────────────────────────
+
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clockEl').textContent=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');
+}
+setInterval(updateClock,15000);
+
+// ── TAB NAV ───────────────────────────────────────────────────────────────────
+
+let curTab='home';
+function switchTab(tab){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.bt').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sc-'+tab).classList.add('active');
+  document.getElementById('bt-'+tab).classList.add('active');
+  curTab=tab;
+  if(tab==='earnings') renderTripList();
+}
+function goScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('sc-'+id).classList.add('active');}
+
+// ── ONLINE TOGGLE ─────────────────────────────────────────────────────────────
+
+function toggleOnline(){
+  isOnline=!isOnline;
+  document.getElementById('bigTog').classList.toggle('on',isOnline);
+  const s=document.getElementById('obStatus');
+  s.textContent=isOnline?'Online':'Offline';
+  s.className='ob-status '+(isOnline?'on':'off');
+  const ps=document.getElementById('profStatus');
+  ps.textContent=isOnline?'Online':'Offline';
+  ps.style.background=isOnline?'var(--gs)':'var(--bg4)';
+  ps.style.color=isOnline?'var(--green)':'var(--text3)';
+  if(isOnline){
+    toast('You are online — waiting for orders','var(--green)');
+    document.getElementById('homeBody').innerHTML=`<div class="no-jobs"><div class="nj-icon" style="opacity:0.25">📡</div><div class="nj-title">Waiting for orders…</div><div class="nj-sub">You'll be notified when a delivery is assigned</div></div>`;
+    setTimeout(()=>{ if(isOnline&&!activeJob) showIncomingJob(); },3000);
+    window._onlineTicker=setInterval(()=>{ onlineMins++; document.getElementById('onlineHr').textContent=Math.floor(onlineMins/60)+'h'+(onlineMins%60>0?` ${onlineMins%60}m`:''); },60000);
+  } else {
+    clearInterval(window._onlineTicker);
+    document.getElementById('homeBody').innerHTML=`<div class="no-jobs"><div class="nj-icon">🛵</div><div class="nj-title">Go online to start</div><div class="nj-sub">Toggle the switch to receive deliveries</div></div>`;
+    toast('You are offline','var(--text3)');
+  }
+}
+
+// ── INCOMING JOB ──────────────────────────────────────────────────────────────
+
+function showIncomingJob(){
+  const job=JOBS[Math.floor(Math.random()*JOBS.length)];
+  activeJob=JSON.parse(JSON.stringify(job));
+  const picks=activeJob.stops.filter(s=>s.type==='p').length;
+  const drops=activeJob.stops.filter(s=>s.type==='d').length;
+  let cd=30;
+  document.getElementById('homeBody').innerHTML=`
+    <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:4px 16px 8px">New delivery request</div>
+    <div class="job-card incoming" id="incomingCard">
+      <div class="jc-head"><span class="jc-id">${activeJob.id} · ${picks} pickup${picks>1?'s':''} · ${drops} drop</span><span class="jc-earn">₹${activeJob.earn}</span></div>
+      <div class="jc-stops">${activeJob.stops.map(s=>`<div class="stop"><div class="stop-dot ${s.type}">${s.type==='p'?'P':'D'}</div><div class="stop-body"><div class="stop-type">${s.type==='p'?'Pickup from':'Deliver to'}</div><div class="stop-name">${s.name}</div><div class="stop-addr">${s.addr}</div><div class="stop-dist">${s.dist}</div></div></div>`).join('')}</div>
+      <div class="jc-actions"><button class="btn-accept" onclick="acceptJob()">Accept delivery</button><button class="btn-decline" onclick="declineJob()">Decline</button></div>
+    </div>
+    <div style="padding:8px 16px;font-size:12px;color:var(--text3);text-align:center">Auto-declines in <span id="adc">30</span>s</div>`;
+  toast('New order '+activeJob.id+' — ₹'+activeJob.earn,'var(--orange)');
+  window._adcTicker=setInterval(()=>{ cd--; const el=document.getElementById('adc'); if(el) el.textContent=cd; if(cd<=0){clearInterval(window._adcTicker);declineJob();}},1000);
+}
+
+function acceptJob(){
+  clearInterval(window._adcTicker);
+  curStop=0; stopState='nav';
+  document.getElementById('itemsSect').style.display='none';
+  document.getElementById('otpSect').style.display='none';
+  document.getElementById('bt-delivery').style.display='flex';
+  setupDelivery();
+  switchTab('delivery');
+  toast('Navigate to '+activeJob.stops[0].name,'var(--blue)');
+  startMap(); startEta();
+}
+
+function declineJob(){
+  clearInterval(window._adcTicker);
+  activeJob=null;
+  document.getElementById('homeBody').innerHTML=`<div class="no-jobs"><div class="nj-icon" style="opacity:0.25">📡</div><div class="nj-title">Waiting for orders…</div><div class="nj-sub">You'll be notified when a delivery is assigned</div></div>`;
+  toast('Order declined','var(--text3)');
+  if(isOnline) setTimeout(showIncomingJob,15000);
+}
+
+// ── DELIVERY ──────────────────────────────────────────────────────────────────
+
+function setupDelivery(){
+  if(!activeJob) return;
+  const stop=activeJob.stops[curStop];
+  document.getElementById('dlvSub').textContent=activeJob.id;
+  document.getElementById('dlvTitle').textContent=(stop.type==='p'?'Pickup':'Drop-off')+' · Stop '+(curStop+1)+' of '+activeJob.stops.length;
+  document.getElementById('dlvEarn').textContent='₹'+activeJob.earn;
+  document.getElementById('stopsTabs').innerHTML=activeJob.stops.map((s,i)=>`<div class="stab ${i===curStop?'active':i<curStop?'done':''}">${i<curStop?'✓ ':''}${s.type==='p'?'Pickup':'Drop'} ${i+1}</div>`).join('');
+  document.getElementById('currStop').innerHTML=`
+    <div class="cs-badge ${stop.type}">${stop.type==='p'?'📦 Pickup':'🏠 Drop-off'}</div>
+    <div class="cs-name">${stop.name}</div>
+    <div class="cs-addr">${stop.addr}</div>
+    <div class="cs-phone">📞 ${stop.phone}</div>
+    <div class="cs-actions">
+      <button class="btn-nav" onclick="toast('Opening navigation…','var(--blue)')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+        Navigate
+      </button>
+      <button class="btn-call" onclick="toast('Calling…','var(--green)')">📞 Call</button>
+    </div>`;
+  const ab=document.getElementById('arrivedBtn');
+  ab.textContent="I've arrived"; ab.disabled=false; ab.style.opacity='1';
+  etaS=480;
+}
+
+function handleArrived(){
+  const stop=activeJob.stops[curStop];
+  stopState='arrived';
+  const ab=document.getElementById('arrivedBtn');
+  ab.textContent='✓ Arrived'; ab.disabled=true; ab.style.opacity='0.4';
+  if(stop.type==='p'){
+    document.getElementById('itemsSect').style.display='block';
+    const cl=document.getElementById('checkItems');
+    cl.innerHTML=stop.items.map((item,i)=>`<div class="ci-row"><div class="ci-check" id="ck-${i}" onclick="toggleCheck(${i},'${item.n}')"></div><span class="ci-name">${item.n}</span><span class="ci-qty">×${item.q}</span></div>`).join('');
+    updateCollectBtn();
+    toast('Arrived at '+stop.name+' — collect items','var(--amber)');
+  } else {
+    document.getElementById('otpSect').style.display='block';
+    clearOtp();
+    toast('Ask customer for OTP','var(--blue)');
+  }
+}
+
+function toggleCheck(i,n){
+  const b=document.getElementById('ck-'+i);
+  b.classList.toggle('done');
+  b.textContent=b.classList.contains('done')?'✓':'';
+  updateCollectBtn();
+}
+
+function updateCollectBtn(){
+  const all=[...document.querySelectorAll('.ci-check')].every(c=>c.classList.contains('done'));
+  const btn=document.getElementById('collectedBtn');
+  btn.style.opacity=all?'1':'0.4';
+  btn.style.pointerEvents=all?'all':'none';
+}
+
+function markCollected(){
+  document.getElementById('itemsSect').style.display='none';
+  curStop++;
+  if(curStop>=activeJob.stops.length){completeDelivery();return;}
+  setupDelivery();
+  etaS=300+Math.floor(Math.random()*300);
+  toast('Heading to '+activeJob.stops[curStop].name,'var(--blue)');
+}
+
+// ── OTP ───────────────────────────────────────────────────────────────────────
+
+function oi(i){
+  document.getElementById('o'+i).classList.add('done');
+  if(document.getElementById('o'+i).value&&i<3) document.getElementById('o'+(i+1)).focus();
+  checkOtp();
+}
+function ob(e,i){if(e.key==='Backspace'&&!document.getElementById('o'+i).value&&i>0) document.getElementById('o'+(i-1)).focus();}
+function checkOtp(){const v=[0,1,2,3].map(i=>document.getElementById('o'+i).value).join('');document.getElementById('otpBtn').disabled=v.length<4;}
+function clearOtp(){[0,1,2,3].forEach(i=>{const el=document.getElementById('o'+i);el.value='';el.classList.remove('done');});document.getElementById('otpBtn').disabled=true;}
+
+function confirmOtp(){
+  const otp=[0,1,2,3].map(i=>document.getElementById('o'+i).value).join('');
+  if(otp==='2847'){
+    document.getElementById('otpSect').style.display='none';
+    toast('OTP verified — delivery confirmed!','var(--green)');
+    setTimeout(completeDelivery,600);
+  } else {
+    toast('Incorrect OTP — try again','var(--red)');
+    clearOtp(); document.getElementById('o0').focus();
+  }
+}
+
+// ── COMPLETE ──────────────────────────────────────────────────────────────────
+
+function completeDelivery(){
+  stopMap(); clearInterval(window._etaTicker);
+  const earn=activeJob.earn;
+  todayEarnings+=earn; trips++;
+  const dist=(2+Math.random()*4).toFixed(1);
+  kmToday=(parseFloat(kmToday)+parseFloat(dist)).toFixed(1);
+  recentTrips.unshift({id:activeJob.id,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),earn,stops:activeJob.stops.length,km:dist});
+  document.getElementById('todayEarn').textContent='₹'+todayEarnings;
+  document.getElementById('tripCnt').textContent=trips;
+  document.getElementById('kmCnt').textContent=kmToday;
+  document.getElementById('earnBig').textContent='₹'+(todayEarnings+485);
+  document.getElementById('earnSub').textContent=`${trips+6} trips · ${(parseFloat(kmToday)+38).toFixed(0)} km`;
+  document.getElementById('cwEarn').textContent='₹'+earn;
+  document.getElementById('cwDist').textContent=dist+'km';
+  document.getElementById('cwTime').textContent=Math.floor(15+Math.random()*20)+'min';
+  document.getElementById('cwStops').textContent=activeJob.stops.length;
+  goScreen('complete');
+}
+
+function returnHome(){
+  activeJob=null; curStop=0; stopState='nav';
+  document.getElementById('bt-delivery').style.display='none';
+  curTab='complete'; switchTab('home');
+  if(isOnline){
+    document.getElementById('homeBody').innerHTML=`<div class="no-jobs"><div class="nj-icon" style="opacity:0.25">📡</div><div class="nj-title">Waiting for orders…</div><div class="nj-sub">You'll be notified when a delivery is assigned</div></div>`;
+    setTimeout(showIncomingJob,8000);
+  }
+}
+
+// ── MAP ───────────────────────────────────────────────────────────────────────
+
+function startMap(){
+  const cvs=document.getElementById('mapCvs');
+  const ctx=cvs.getContext('2d');
+  function resize(){cvs.width=cvs.offsetWidth;cvs.height=cvs.offsetHeight;}
+  resize(); window.addEventListener('resize',resize);
+  mapPhase=0;
+  function draw(){
+    const W=cvs.width,H=cvs.height;
+    ctx.fillStyle='#1a1916'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+    for(let x=0;x<W;x+=36){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=36){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.strokeStyle='rgba(255,255,255,0.09)'; ctx.lineWidth=10; ctx.lineCap='round';
+    [[0,H*.35,W,H*.4],[0,H*.65,W,H*.6],[W*.35,0,W*.4,H],[W*.6,0,W*.65,H]].forEach(([x1,y1,x2,y2])=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();});
+    const pts=[[W*.5,H*.85],[W*.5,H*.6],[W*.35,H*.6],[W*.35,H*.35],[W*.65,H*.35],[W*.65,H*.2]];
+    const prog=(mapPhase%200)/200*( pts.length-1);
+    ctx.strokeStyle='#e8522a'; ctx.lineWidth=2.5; ctx.setLineDash([7,4]);
+    ctx.beginPath();
+    for(let i=0;i<=Math.min(Math.floor(prog)+1,pts.length-1);i++){
+      const[px,py]=pts[i];
+      if(i===0) ctx.moveTo(px,py);
+      else{ const f=prog-(i-1); if(f<1&&i===Math.floor(prog)+1){const[px0,py0]=pts[i-1];ctx.lineTo(px0+(px-px0)*f,py0+(py-py0)*f);}else ctx.lineTo(px,py);}
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    [['#f0a020','P1',0],['#f0a020','P2',1],['#2ecc71','D',2]].forEach(([c,lbl,i])=>{
+      if(i>=pts.length)return;const[px,py]=pts[i];
+      ctx.fillStyle=c;ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#000';ctx.font='bold 8px DM Mono,monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lbl,px,py);
+    });
+    const rp=(Math.sin(mapPhase*.05)*.5+.5)*.3,ri=Math.min(Math.floor(rp*(pts.length-1)),pts.length-2);
+    const rf=rp*(pts.length-1)-ri;
+    const[rx0,ry0]=pts[ri],[rx1,ry1]=pts[Math.min(ri+1,pts.length-1)];
+    const rx=rx0+(rx1-rx0)*rf,ry=ry0+(ry1-ry0)*rf;
+    const pulse=(mapPhase%40)/40;
+    ctx.strokeStyle=`rgba(232,82,42,${.6*(1-pulse)})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(rx,ry,10+pulse*14,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#e8522a';ctx.beginPath();ctx.arc(rx,ry,7,0,Math.PI*2);ctx.fill();
+    mapPhase++; mapAF=requestAnimationFrame(draw);
+  }
+  draw();
+}
+function stopMap(){if(mapAF) cancelAnimationFrame(mapAF);}
+
+function startEta(){
+  clearInterval(window._etaTicker);
+  etaS=480;
+  window._etaTicker=setInterval(()=>{
+    etaS=Math.max(0,etaS-15);
+    const el=document.getElementById('etaVal');
+    if(el) el.textContent=Math.ceil(etaS/60);
+    if(etaS===0) clearInterval(window._etaTicker);
+  },1000);
+}
+
+// ── EARNINGS ──────────────────────────────────────────────────────────────────
+
+function renderTripList(){
+  const all=[...recentTrips,...PAST];
+  document.getElementById('tripList').innerHTML=all.slice(0,8).map(t=>`
+    <div class="trip-row">
+      <div><div class="tr-id">${t.id}</div><div class="tr-stops">${t.stops} stop${t.stops>1?'s':''} · ${t.km} km</div></div>
+      <div><div class="tr-earn">+₹${t.earn}</div><div class="tr-time">${t.time}</div></div>
+    </div>`).join('');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+
+function toast(msg,color='var(--orange)'){
+  const w=document.getElementById('toastWrap');
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML=`<div class="toast-bar" style="background:${color}"></div><span>${msg}</span>`;
+  w.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),350);},3200);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
+if(currentRider) initApp(currentRider);
+</script>
+</body>
+</html>
