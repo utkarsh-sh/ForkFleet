@@ -362,8 +362,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,0.92);backdrop-fi
   </div>
 </div>
 
-<script src="http://localhost:4000/socket.io/socket.io.js"></script>
 <script>
+const SOCKET_BASE = location.hostname === 'localhost' ? 'http://localhost:4000' : location.origin;
+(function loadSocketClient() {
+  const script = document.createElement('script');
+  script.src = `${SOCKET_BASE}/socket.io/socket.io.js`;
+  script.defer = true;
+  document.head.appendChild(script);
+})();
 const DATA = [
   {
     id:1, name:"Bukhara Tandoor", emoji:"🍛", bg:"#2a1a0e", tag:"Popular", tagClass:"tag-green",
@@ -940,7 +946,7 @@ function startLiveTracking(orderIdToTrack) {
   try {
     if (trackingSocket) trackingSocket.disconnect();
 
-    trackingSocket = window.io('http://localhost:4000', {
+    trackingSocket = window.io(SOCKET_BASE, {
       auth: { token },
       transports: ['websocket', 'polling'],
     });
