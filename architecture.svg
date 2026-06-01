@@ -1,0 +1,285 @@
+<svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+  <defs>
+    <style>
+      .title { font-family: Georgia, serif; font-size: 18px; font-weight: 700; fill: #f2ede9; }
+      .label { font-size: 11px; fill: #8c887f; letter-spacing: 1px; }
+      .box-title { font-size: 13px; font-weight: 700; fill: #f2ede9; }
+      .box-sub { font-size: 10px; fill: #8c887f; }
+      .tag { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; }
+      .arrow-label { font-size: 9px; fill: #8c887f; }
+    </style>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4a4742"/>
+    </marker>
+    <marker id="arr-o" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#e8522a"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#2ecc71"/>
+    </marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4090e0"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="640" fill="#12110f" rx="12"/>
+
+  <!-- Grid lines (subtle) -->
+  <g opacity="0.04" stroke="#ffffff" stroke-width="0.5">
+    <line x1="0" y1="80" x2="960" y2="80"/>
+    <line x1="0" y1="200" x2="960" y2="200"/>
+    <line x1="0" y1="320" x2="960" y2="320"/>
+    <line x1="0" y1="440" x2="960" y2="440"/>
+    <line x1="0" y1="560" x2="960" y2="560"/>
+  </g>
+
+  <!-- Title -->
+  <text x="40" y="42" class="title">ForkFleet — System Architecture</text>
+  <text x="40" y="60" class="label">MULTI-RESTAURANT FOOD DELIVERY PLATFORM  ·  v2.0</text>
+
+  <!-- Orange accent line -->
+  <rect x="40" y="70" width="880" height="2" fill="#e8522a" opacity="0.6" rx="1"/>
+
+  <!-- ══ LAYER LABELS ══ -->
+  <text x="18" y="140" class="label" transform="rotate(-90,18,140)">CLIENT</text>
+  <text x="18" y="280" class="label" transform="rotate(-90,18,280)">API</text>
+  <text x="18" y="430" class="label" transform="rotate(-90,18,430)">DATA</text>
+  <text x="18" y="580" class="label" transform="rotate(-90,18,580)">EVENTS</text>
+
+  <!-- ══ CLIENT LAYER ══ -->
+
+  <!-- Customer App -->
+  <rect x="52" y="88" width="200" height="108" fill="#1a1916" rx="8" stroke="#e8522a" stroke-width="1.5"/>
+  <rect x="52" y="88" width="200" height="4" fill="#e8522a" rx="2"/>
+  <text x="64" y="108" class="tag" fill="#e8522a">CUSTOMER APP</text>
+  <text x="64" y="125" class="box-sub">📱 HTML / CSS / JavaScript</text>
+  <text x="64" y="142" class="box-sub">• Multi-restaurant cart</text>
+  <text x="64" y="156" class="box-sub">• GPS + Nominatim geocoding</text>
+  <text x="64" y="170" class="box-sub">• Razorpay checkout widget</text>
+  <text x="64" y="184" class="box-sub">• Live tracking via WebSocket</text>
+
+  <!-- Restaurant Dashboard -->
+  <rect x="284" y="88" width="200" height="108" fill="#1a1916" rx="8" stroke="#2ecc71" stroke-width="1.5"/>
+  <rect x="284" y="88" width="200" height="4" fill="#2ecc71" rx="2"/>
+  <text x="296" y="108" class="tag" fill="#2ecc71">RESTAURANT DASHBOARD</text>
+  <text x="296" y="125" class="box-sub">🍳 HTML / CSS / JavaScript</text>
+  <text x="296" y="142" class="box-sub">• Live order kanban board</text>
+  <text x="296" y="156" class="box-sub">• Kitchen item checklist</text>
+  <text x="296" y="170" class="box-sub">• Menu management</text>
+  <text x="296" y="184" class="box-sub">• Revenue analytics charts</text>
+
+  <!-- Rider App -->
+  <rect x="516" y="88" width="200" height="108" fill="#1a1916" rx="8" stroke="#4090e0" stroke-width="1.5"/>
+  <rect x="516" y="88" width="200" height="4" fill="#4090e0" rx="2"/>
+  <text x="528" y="108" class="tag" fill="#4090e0">RIDER PWA</text>
+  <text x="528" y="125" class="box-sub">🛵 PWA + Service Worker</text>
+  <text x="528" y="142" class="box-sub">• Online/offline toggle</text>
+  <text x="528" y="156" class="box-sub">• Multi-stop canvas map</text>
+  <text x="528" y="170" class="box-sub">• OTP delivery confirm</text>
+  <text x="528" y="184" class="box-sub">• Earnings dashboard</text>
+
+  <!-- Razorpay SDK badge -->
+  <rect x="748" y="88" width="160" height="108" fill="#1a1916" rx="8" stroke="#4a4742" stroke-width="1"/>
+  <text x="760" y="108" class="tag" fill="#f0a020">RAZORPAY SDK</text>
+  <text x="760" y="125" class="box-sub">💳 Checkout Widget</text>
+  <text x="760" y="142" class="box-sub">• Payment modal</text>
+  <text x="760" y="156" class="box-sub">• UPI / Cards / Netbanking</text>
+  <text x="760" y="170" class="box-sub">• Returns signature</text>
+  <text x="760" y="184" class="box-sub">• for verification</text>
+
+  <!-- Separator line -->
+  <line x1="40" y1="214" x2="920" y2="214" stroke="#2d2b27" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- ══ API LAYER ══ -->
+
+  <!-- Main API Box -->
+  <rect x="52" y="228" width="612" height="116" fill="#1a1916" rx="8" stroke="#e8522a" stroke-width="1"/>
+  <rect x="52" y="228" width="612" height="4" fill="#e8522a" rx="1"/>
+  <text x="64" y="248" class="tag" fill="#e8522a">EXPRESS.JS + SOCKET.IO  ·  :4000</text>
+
+  <!-- Route boxes inside API -->
+  <rect x="64" y="255" width="76" height="28" fill="#232119" rx="4"/>
+  <text x="102" y="274" class="box-sub" text-anchor="middle">/auth</text>
+
+  <rect x="146" y="255" width="76" height="28" fill="#232119" rx="4"/>
+  <text x="184" y="274" class="box-sub" text-anchor="middle">/cart</text>
+
+  <rect x="228" y="255" width="76" height="28" fill="#232119" rx="4"/>
+  <text x="266" y="274" class="box-sub" text-anchor="middle">/orders</text>
+
+  <rect x="310" y="255" width="84" height="28" fill="#1a2535" rx="4" stroke="#4090e0" stroke-width="0.5"/>
+  <text x="352" y="274" class="box-sub" text-anchor="middle" fill="#4090e0">/payments</text>
+
+  <rect x="400" y="255" width="90" height="28" fill="#232119" rx="4"/>
+  <text x="445" y="274" class="box-sub" text-anchor="middle">/restaurants</text>
+
+  <rect x="496" y="255" width="76" height="28" fill="#232119" rx="4"/>
+  <text x="534" y="274" class="box-sub" text-anchor="middle">/riders</text>
+
+  <rect x="578" y="255" width="76" height="28" fill="#232119" rx="4"/>
+  <text x="616" y="274" class="box-sub" text-anchor="middle">/webhook</text>
+
+  <!-- Service boxes -->
+  <rect x="64" y="296" width="148" height="40" fill="#1a1a0e" rx="4" stroke="#f0a020" stroke-width="0.8"/>
+  <text x="138" y="312" class="box-sub" text-anchor="middle" fill="#f0a020">⚡ Order Splitting Engine</text>
+  <text x="138" y="326" class="box-sub" text-anchor="middle">Atomic PostgreSQL transaction</text>
+
+  <rect x="220" y="296" width="140" height="40" fill="#1a1a0e" rx="4" stroke="#f0a020" stroke-width="0.8"/>
+  <text x="290" y="312" class="box-sub" text-anchor="middle" fill="#f0a020">💳 Razorpay Service</text>
+  <text x="290" y="326" class="box-sub" text-anchor="middle">HMAC verify + Route splits</text>
+
+  <rect x="368" y="296" width="136" height="40" fill="#1a1a0e" rx="4" stroke="#f0a020" stroke-width="0.8"/>
+  <text x="436" y="312" class="box-sub" text-anchor="middle" fill="#f0a020">🔐 JWT Auth Middleware</text>
+  <text x="436" y="326" class="box-sub" text-anchor="middle">Access + refresh tokens</text>
+
+  <rect x="512" y="296" width="140" height="40" fill="#1a1a0e" rx="4" stroke="#f0a020" stroke-width="0.8"/>
+  <text x="582" y="312" class="box-sub" text-anchor="middle" fill="#f0a020">🔔 Webhook Handler</text>
+  <text x="582" y="326" class="box-sub" text-anchor="middle">Idempotent event processor</text>
+
+  <!-- WebSocket box -->
+  <rect x="680" y="228" width="188" height="116" fill="#1a1916" rx="8" stroke="#4090e0" stroke-width="1"/>
+  <rect x="680" y="228" width="188" height="4" fill="#4090e0" rx="1"/>
+  <text x="692" y="248" class="tag" fill="#4090e0">SOCKET.IO + REDIS PUB/SUB</text>
+  <text x="692" y="268" class="box-sub">Real-time event bridge</text>
+  <text x="692" y="286" class="box-sub">• psubscribe('order:*')</text>
+  <text x="692" y="300" class="box-sub">• Room: order:{id}</text>
+  <text x="692" y="314" class="box-sub">• Room: restaurant:{id}</text>
+  <text x="692" y="328" class="box-sub">• Room: rider:{id}</text>
+
+  <!-- Separator line -->
+  <line x1="40" y1="362" x2="920" y2="362" stroke="#2d2b27" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- ══ DATA LAYER ══ -->
+
+  <!-- PostgreSQL -->
+  <rect x="52" y="376" width="220" height="140" fill="#1a1916" rx="8" stroke="#4169e1" stroke-width="1.5"/>
+  <rect x="52" y="376" width="220" height="4" fill="#4169e1" rx="2"/>
+  <text x="64" y="396" class="tag" fill="#4169e1">POSTGRESQL 15</text>
+  <text x="64" y="412" class="box-sub">Primary persistent store</text>
+  <text x="64" y="430" class="box-sub">• 13 tables + 2 views</text>
+  <text x="64" y="444" class="box-sub">• ACID transactions + row locks</text>
+  <text x="64" y="458" class="box-sub">• Triggers: updated_at, ratings</text>
+  <text x="64" y="472" class="box-sub">• GIN indexes for full-text search</text>
+  <text x="64" y="486" class="box-sub">• Money in paise (INTEGER)</text>
+  <text x="64" y="500" class="box-sub">• UUID primary keys</text>
+
+  <!-- Redis -->
+  <rect x="292" y="376" width="220" height="140" fill="#1a1916" rx="8" stroke="#dc382d" stroke-width="1.5"/>
+  <rect x="292" y="376" width="220" height="4" fill="#dc382d" rx="2"/>
+  <text x="304" y="396" class="tag" fill="#dc382d">REDIS 7</text>
+  <text x="304" y="412" class="box-sub">Cache, sessions &amp; messaging</text>
+  <text x="304" y="430" class="box-sub">• Cart data (TTL: 1 hour)</text>
+  <text x="304" y="444" class="box-sub">• Order event pub/sub</text>
+  <text x="304" y="458" class="box-sub">• GEORADIUS for rider locations</text>
+  <text x="304" y="472" class="box-sub">• riders:available set</text>
+  <text x="304" y="486" class="box-sub">• Rate limit counters</text>
+  <text x="304" y="500" class="box-sub">• WebSocket room state</text>
+
+  <!-- Razorpay API -->
+  <rect x="532" y="376" width="220" height="140" fill="#1a1916" rx="8" stroke="#f0a020" stroke-width="1.5"/>
+  <rect x="532" y="376" width="220" height="4" fill="#f0a020" rx="2"/>
+  <text x="544" y="396" class="tag" fill="#f0a020">RAZORPAY API</text>
+  <text x="544" y="412" class="box-sub">Payment gateway + routing</text>
+  <text x="544" y="430" class="box-sub">• orders.create() → payment ID</text>
+  <text x="544" y="444" class="box-sub">• HMAC-SHA256 signature verify</text>
+  <text x="544" y="458" class="box-sub">• Route transfers to restaurants</text>
+  <text x="544" y="472" class="box-sub">• payments.refund() for cancels</text>
+  <text x="544" y="486" class="box-sub">• Webhook events (idempotent)</text>
+  <text x="544" y="500" class="box-sub">• accounts.create() onboarding</text>
+
+  <!-- Nominatim / GPS -->
+  <rect x="772" y="376" width="136" height="140" fill="#1a1916" rx="8" stroke="#2ecc71" stroke-width="1"/>
+  <text x="784" y="396" class="tag" fill="#2ecc71">EXTERNAL APIs</text>
+  <text x="784" y="412" class="box-sub">Location services</text>
+  <text x="784" y="432" class="box-sub">📍 Browser Geolocation</text>
+  <text x="784" y="446" class="box-sub">🗺 Nominatim reverse</text>
+  <text x="784" y="460" class="box-sub">   geocoding (OSM)</text>
+  <text x="784" y="476" class="box-sub">📐 Haversine distance</text>
+  <text x="784" y="490" class="box-sub">   calculation</text>
+  <text x="784" y="506" class="box-sub">🔴 Redis GEORADIUS</text>
+
+  <!-- Separator line -->
+  <line x1="40" y1="530" x2="920" y2="530" stroke="#2d2b27" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- ══ EVENT FLOW LEGEND ══ -->
+  <text x="52" y="552" class="tag" fill="#8c887f">EVENT FLOW</text>
+
+  <!-- Legend items -->
+  <line x1="52" y1="572" x2="100" y2="572" stroke="#e8522a" stroke-width="1.5" marker-end="url(#arr-o)"/>
+  <text x="108" y="576" class="arrow-label">REST API call</text>
+
+  <line x1="220" y1="572" x2="268" y2="572" stroke="#4090e0" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-b)"/>
+  <text x="276" y="576" class="arrow-label">WebSocket / real-time</text>
+
+  <line x1="420" y1="572" x2="468" y2="572" stroke="#2ecc71" stroke-width="1.5" marker-end="url(#arr-g)"/>
+  <text x="476" y="576" class="arrow-label">DB / cache query</text>
+
+  <line x1="600" y1="572" x2="648" y2="572" stroke="#f0a020" stroke-width="1.5" stroke-dasharray="2,3" marker-end="url(#arr)"/>
+  <text x="656" y="576" class="arrow-label">Async / webhook</text>
+
+  <!-- Key metric badges -->
+  <rect x="52" y="596" width="155" height="22" fill="#1a1916" rx="4" stroke="#2d2b27"/>
+  <text x="60" y="611" class="tag" fill="#e8522a">⚡  &lt;200ms</text>
+  <text x="108" y="611" class="tag" fill="#8c887f"> WebSocket latency</text>
+
+  <rect x="220" y="596" width="155" height="22" fill="#1a1916" rx="4" stroke="#2d2b27"/>
+  <text x="228" y="611" class="tag" fill="#2ecc71">✓  ACID</text>
+  <text x="262" y="611" class="tag" fill="#8c887f"> order splitting txn</text>
+
+  <rect x="388" y="596" width="160" height="22" fill="#1a1916" rx="4" stroke="#2d2b27"/>
+  <text x="396" y="611" class="tag" fill="#f0a020">🔐  timingSafeEqual</text>
+  <text x="492" y="611" class="tag" fill="#8c887f"> sig verify</text>
+
+  <rect x="562" y="596" width="150" height="22" fill="#1a1916" rx="4" stroke="#2d2b27"/>
+  <text x="570" y="611" class="tag" fill="#4090e0">♻️  Idempotent</text>
+  <text x="641" y="611" class="tag" fill="#8c887f"> webhooks</text>
+
+  <rect x="726" y="596" width="140" height="22" fill="#1a1916" rx="4" stroke="#2d2b27"/>
+  <text x="734" y="611" class="tag" fill="#8c887f">13 tables · paise · UUID</text>
+
+  <!-- ══ ARROWS — Client to API ══ -->
+
+  <!-- Customer → API (REST) -->
+  <line x1="152" y1="196" x2="152" y2="226" stroke="#e8522a" stroke-width="1.2" marker-end="url(#arr-o)"/>
+  <text x="155" y="214" class="arrow-label">REST</text>
+
+  <!-- Restaurant → API (REST) -->
+  <line x1="384" y1="196" x2="280" y2="226" stroke="#2ecc71" stroke-width="1.2" marker-end="url(#arr-g)"/>
+  <text x="320" y="212" class="arrow-label">REST</text>
+
+  <!-- Rider → API (REST) -->
+  <line x1="570" y1="196" x2="480" y2="226" stroke="#4090e0" stroke-width="1.2" marker-end="url(#arr-b)"/>
+  <text x="508" y="212" class="arrow-label">REST</text>
+
+  <!-- WS back to clients -->
+  <line x1="680" y1="252" x2="660" y2="252" stroke="#4090e0" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-b)"/>
+  <line x1="660" y1="148" x2="660" y2="260"/>
+  <line x1="660" y1="148" x2="254" y2="148" stroke="#4090e0" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="254" y1="148" x2="254" y2="196" stroke="#4090e0" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-b)"/>
+  <line x1="440" y1="148" x2="440" y2="196" stroke="#4090e0" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-b)"/>
+  <line x1="600" y1="148" x2="600" y2="196" stroke="#4090e0" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-b)"/>
+  <text x="665" y="208" class="arrow-label" fill="#4090e0">WS events</text>
+
+  <!-- Razorpay (client) → API -->
+  <line x1="828" y1="196" x2="820" y2="226" stroke="#f0a020" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr)"/>
+  <text x="835" y="214" class="arrow-label">verify</text>
+
+  <!-- ══ API to Data Layer ══ -->
+
+  <!-- API → PostgreSQL -->
+  <line x1="200" y1="344" x2="162" y2="374" stroke="#4169e1" stroke-width="1.5" marker-end="url(#arr-b)"/>
+  <text x="164" y="362" class="arrow-label">SQL queries</text>
+
+  <!-- API → Redis -->
+  <line x1="350" y1="344" x2="390" y2="374" stroke="#dc382d" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="352" y="362" class="arrow-label">RESP cmds</text>
+
+  <!-- API → Razorpay -->
+  <line x1="580" y1="344" x2="620" y2="374" stroke="#f0a020" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="576" y="362" class="arrow-label">API calls</text>
+
+  <!-- API → Nominatim (small) -->
+  <line x1="670" y1="286" x2="770" y2="390" stroke="#2ecc71" stroke-width="0.8" stroke-dasharray="3,4" marker-end="url(#arr-g)"/>
+
+</svg>
